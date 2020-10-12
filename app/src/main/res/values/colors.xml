@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">@android:color/black</color>
+    <color name="colorPrimaryDark">@color/lightBlack</color>
+    <color name="colorAccent">@color/lightBlue</color>
+    <color name="lightBlack">#2F3437</color>
+    <color name="fbButtonColor">#1976D2</color>
+    <color name="googleButtonColor">@android:color/white</color>
+    <color name="emailButtonColor">#2F3437</color>
+    <color name="blue">#4444C6</color>
+    <color name="lightBlue">#01007C</color>
+    <color name="lightBackground">#EDF2F2</color>
+</resources>

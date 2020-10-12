@@ -1,0 +1,27 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    <style name="MaterialButtonTheme" parent="AppTheme">
+        <item name="android:padding">10dp</item>
+        <item name="textAllCaps">true</item>
+        <item name="iconTint">@null</item>
+        <item name="fontFamily">@font/medium</item>
+        <item name="cornerRadius">24dp</item>
+    </style>
+    <style name="SignUpTheme" parent="TextAppearance.AppCompat.Headline">
+        <item name="android:fontFamily">@font/regular</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="EditTextTheme" parent="AppTheme">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:fontFamily">@font/regular</item>
+        <item name="android:textColorHint">@color/colorPrimary</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+</resources>

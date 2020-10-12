@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Take Note</string>
+    <string name="facebook_application_id">962142674289252</string>
+    <string name="fb_login_protocol_scheme">fb962142674289252</string>
+    <string name="login_with_facebook">login with facebook</string>
+    <string name="login_with_google">login with google</string>
+    <string name="login_sign_up_using_email">login/sign up using email</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="proceed">proceed</string>
+    <string name="enter_email_address_for_verification">Enter Email Address for verification</string>
+    <string name="use_your_email_id_to_login_to_your_account">Use your email ID to login to your account</string>
+    <string name="or">or</string>
+    <string name="register">Register</string>
+    <string name="sign_up">sign up</string>
+    <string name="username">Username</string>
+    <string name="fullName">FullName</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="search_note">Search Note</string>
+</resources>
