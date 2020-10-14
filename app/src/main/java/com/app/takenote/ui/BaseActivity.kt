@@ -6,6 +6,10 @@ import android.os.Bundle
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import com.app.takenote.pojo.User
+import com.app.takenote.utility.BUNDLE
+import com.app.takenote.utility.CURRENT_USER
+import com.app.takenote.utility.FULL_NAME
 import com.app.takenote.utility.showMessage
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -26,9 +30,17 @@ abstract class BaseActivity : AppCompatActivity() {
         setContentView(layoutResourceId)
     }
 
-    fun <T> startIntentFor(activityClass: Class<T>) {
+    fun <T> startIntentFor(activityClass: Class<T>, currentUser: User? = null) {
         val intent = Intent(this, activityClass)
+        currentUser?.let {
+            val bundle = Bundle()
+            bundle.putParcelable(CURRENT_USER, currentUser)
+            intent.putExtra(BUNDLE,bundle)
+        }
         startActivity(intent)
     }
-    protected fun showMessage(message : String) = findViewById<View>(android.R.id.content).showMessage(message)
+
+    protected fun showMessage(message: String) =
+        findViewById<View>(android.R.id.content).showMessage(message)
+
 }
