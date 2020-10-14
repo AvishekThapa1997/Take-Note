@@ -23,4 +23,25 @@ const val FIELD_CANNOT_BE_EMPTY = "Field Cannot Be Empty"
 
 const val PASSWORD_DID_NOT_MATCH = "Password did not match"
 
-const val FULLNAME_SHOULD_CONTAIN_ATLEAST_EIGHT_CHARACTERS = "Fullname should contain atleast 8 characters"
+const val FULLNAME_SHOULD_CONTAIN_ATLEAST_EIGHT_CHARACTERS =
+    "Fullname should contain atleast 8 characters"
+
+const val COLLECTION_NAME = "users"
+
+const val SOMETHING_WENT_WRONG = "Something Went Wrong"
+
+const val EMAIL_IS_ALREADY_REGISTERED = "Email is already registered!"
+
+const val FULL_NAME = "fullname"
+
+const val EMAIL = "email"
+
+const val PASSWORD = "password"
+
+const val EMAIL_NOT_REGISTERED = "Email is not registered!"
+
+const val INCORRECT_PASSWORD = "Incorrect Password"
+
+const val CURRENT_USER = "user"
+
+const val BUNDLE = "bundle"
