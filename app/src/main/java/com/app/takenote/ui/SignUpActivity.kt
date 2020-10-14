@@ -24,6 +24,7 @@ class SignUpActivity : BaseActivity() {
         authViewModel.currentUser.observe(this) { response ->
             when (response) {
                 is Success -> {
+                    startIntentFor(HomeActivity::class.java, response.data)
                 }
                 is Error -> showMessage(response.message)
             }

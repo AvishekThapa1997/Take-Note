@@ -10,7 +10,7 @@ import com.app.takenote.viewmodels.LoginViewModel
 import kotlinx.android.synthetic.main.activity_login.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class LoginActivity : BaseActivity(), View.OnClickListener{
+class LoginActivity : BaseActivity(), View.OnClickListener {
     override val layoutResourceId: Int
         get() = R.layout.activity_login
     private val authViewModel: AuthViewModel by viewModel<LoginViewModel>()
@@ -18,7 +18,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener{
         super.onCreate(savedInstanceState)
         signUpButton.setOnClickListener(this)
         proceed.setOnClickListener(this)
-        observeUser()
+        observeStatus()
     }
 
     override fun onClick(v: View?) {
@@ -34,12 +34,13 @@ class LoginActivity : BaseActivity(), View.OnClickListener{
         authViewModel.loginUser(email, password)
     }
 
-    private fun observeUser() {
-        authViewModel.currentUser.observe(this) {
-            when (it) {
+    private fun observeStatus() {
+        authViewModel.currentUser.observe(this) { response ->
+            when (response) {
                 is Success -> {
+                    startIntentFor(HomeActivity::class.java, response.data)
                 }
-                is Error -> showMessage(it.message)
+                is Error -> showMessage(response.message)
             }
         }
     }
