@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 29
@@ -44,6 +45,9 @@ dependencies {
     implementation 'com.mikhaellopez:circularimageview:4.2.0'
     implementation "com.wajahatkarim3.easyvalidation:easyvalidation-core:1.0.1"
     implementation "com.github.tozny:java-aes-crypto:1.1.0"
+    implementation "com.theartofdev.edmodo:android-image-cropper:2.8.0"
+    implementation "com.github.bumptech.glide:glide:4.11.0"
+    kapt "com.github.bumptech.glide:compiler:4.11.0"
 
     def lifecycle_version = "2.2.0"
     // ViewModel
@@ -65,5 +69,6 @@ dependencies {
     //firebase dependencies
     implementation "com.google.firebase:firebase-auth-ktx:19.4.0"
     implementation "com.google.firebase:firebase-firestore-ktx:21.7.1"
+    implementation "com.google.firebase:firebase-storage-ktx:19.2.0"
 
 }
