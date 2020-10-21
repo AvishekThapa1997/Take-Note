@@ -12,11 +12,11 @@ fun String.validPassword(): String {
         return PASSWORD_SHOULD_CONTAIN_ATLEAST_ONE_UPPERCASE
     if (!this.atleastOneLowerCase())
         return PASSWORD_SHOULD_CONTAIN_ATLEAST_ONE_LOWERCASE
-    if(!this.atleastOneSpecialCharacters())
+    if (!this.atleastOneSpecialCharacters())
         return PASSWORD_SHOULD_CONTAIN_ATLEAST_ONE_SPECIAL_CHARACTERS
-    if(!this.atleastOneNumber())
+    if (!this.atleastOneNumber())
         return PASSWORD_SHOULD_CONTAIN_ATLEAST_ONE_DIGIT
-    if(!this.minLength(8))
+    if (!this.minLength(8))
         return PASSWORD_SHOULD_OF_MINIMUM_EIGHT_CHARACTERS
     return VALID_PASSWORD
 }
