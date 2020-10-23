@@ -7,11 +7,20 @@ data class User(
     val fullName: String?,
     val email: String?,
     val password: String?,
-    val imageUri: String?
+    val imageUri: String?,
+    val uid: String?
 ) : Parcelable {
-    constructor(fullName: String, email: String) : this(fullName, email, "", "")
+    constructor(fullName: String?, email: String?, imageUri: String?, uid: String?) : this(
+        fullName,
+        email,
+        "",
+        imageUri,
+        uid
+    )
+    constructor(email: String?, uid: String?) : this("", email, "", "", uid)
 
     constructor(source: Parcel) : this(
+        source.readString(),
         source.readString(),
         source.readString(),
         source.readString(),
@@ -25,6 +34,7 @@ data class User(
         writeString(email)
         writeString(password)
         writeString(imageUri)
+        writeString(uid)
     }
 
     companion object {
