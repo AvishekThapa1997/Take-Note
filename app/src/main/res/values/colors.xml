@@ -10,4 +10,5 @@
     <color name="blue">#4444C6</color>
     <color name="lightBlue">#01007C</color>
     <color name="lightBackground">#EDF2F2</color>
+    <color name="separator">#E8E7E3</color>
 </resources>

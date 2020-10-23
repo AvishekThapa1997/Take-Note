@@ -17,4 +17,10 @@
     <string name="fullName">FullName</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="search_note">Search Note</string>
+    <string name="profile_info">profile info</string>
+    <string name="instructions">Please provide your name and an optional profile photo</string>
+    <string name="next">next</string>
+    <string name="enter_your_name">Enter your name</string>
+    <string name="save">save</string>
+    <string name="cancel">Cancel</string>
 </resources>
