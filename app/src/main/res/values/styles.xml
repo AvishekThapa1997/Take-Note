@@ -5,7 +5,9 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowContentTransitions">true</item>
     </style>
+
     <style name="MaterialButtonTheme" parent="AppTheme">
         <item name="android:padding">10dp</item>
         <item name="textAllCaps">true</item>
@@ -13,15 +15,33 @@
         <item name="fontFamily">@font/medium</item>
         <item name="cornerRadius">24dp</item>
     </style>
+
     <style name="SignUpTheme" parent="TextAppearance.AppCompat.Headline">
         <item name="android:fontFamily">@font/regular</item>
         <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:textStyle">bold</item>
     </style>
+
     <style name="EditTextTheme" parent="AppTheme">
         <item name="android:background">@android:color/transparent</item>
         <item name="android:fontFamily">@font/regular</item>
         <item name="android:textColorHint">@color/colorPrimary</item>
         <item name="android:textSize">16sp</item>
     </style>
+
+    <style name="DialogStyle" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+<!--        <item name="background">@drawable/updated_sheet_corner_drawable</item>-->
+    </style>
+    <!--    <style name="AnimationTheme" parent="AppTheme">-->
+    <!--        <item name="android:windowSharedElementEnterTransition">-->
+    <!--            @transition/shared_transition-->
+    <!--        </item>-->
+    <!--        <item name="android:windowSharedElementExitTransition">-->
+    <!--            @transition/shared_transition-->
+    <!--        </item>-->
+    <!--        <item name="android:windowEnterTransition">@transition/shared_transition</item>-->
+    <!--        <item name="android:windowExitTransition">@transition/shared_transition</item>-->
+    <!--    </style>-->
 </resources>
