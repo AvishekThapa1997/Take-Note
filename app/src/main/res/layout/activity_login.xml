@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -127,9 +126,9 @@
             android:id="@+id/separatorText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:fontFamily="@font/medium"
             android:text="@string/or"
-            android:layout_marginTop="12dp"
             android:textAllCaps="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
             android:textColor="@android:color/black"
@@ -143,16 +142,31 @@
             style="@style/MaterialButtonTheme"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/medium"
             android:layout_marginTop="12dp"
+            android:fontFamily="@font/medium"
             android:padding="12dp"
             android:text="@string/sign_up"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textStyle="bold"
             app:backgroundTint="@color/lightBlack"
-            app:layout_constraintTop_toBottomOf="@id/separatorText"
             app:layout_constraintEnd_toEndOf="@id/endGuideline"
             app:layout_constraintStart_toStartOf="@id/startGuideline"
-            />
+            app:layout_constraintTop_toBottomOf="@id/separatorText" />
+
+        <ProgressBar
+            android:id="@+id/loginProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="emailTextInputLayout,passwordTextInputLayout,proceed,signUpButton" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

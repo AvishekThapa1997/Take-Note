@@ -1,6 +1,8 @@
 package com.app.takenote.ui
 
+
 import android.os.Bundle
+import android.view.View
 import com.app.takenote.R
 import com.app.takenote.utility.Error
 import com.app.takenote.utility.Success
@@ -20,22 +22,40 @@ class SignUpActivity : BaseActivity() {
         }
     }
 
+
+
     private fun observeCurrentUser() {
         authViewModel.currentUser.observe(this) { response ->
             when (response) {
                 is Success -> {
-                    startIntentFor(HomeActivity::class.java, response.data)
+                    startIntentFor(AddProfileActivity::class.java, response.data)
+                    finishAffinity()
                 }
                 is Error -> showMessage(response.message)
             }
+            signUpProgress.hideView(View.GONE)
+            enabledGroup()
         }
     }
 
     private fun signUpUser() {
-        val fullName = fullName.text.toString().trim()
         val email = userEmail.text.toString().trim()
         val password = userPassword.text.toString().trim()
         val confirmPassword = confirmPassword.text.toString().trim()
-        authViewModel.signUpUser(fullName, email, password, confirmPassword)
+        authViewModel.signUpUser(email, password, confirmPassword)
+        disabledGroup()
+        signUpProgress.showView()
+    }
+
+    private fun enabledGroup(){
+        signUpGroup.referencedIds.forEach {viewId ->
+            findViewById<View>(viewId).isEnabled = true
+        }
+    }
+
+    private fun disabledGroup() {
+        signUpGroup.referencedIds.forEach {viewId ->
+            findViewById<View>(viewId).isEnabled = false
+        }
     }
 }

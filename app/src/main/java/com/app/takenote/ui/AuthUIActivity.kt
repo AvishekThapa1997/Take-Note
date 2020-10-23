@@ -10,6 +10,7 @@ class AuthUIActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         signInWithEmailPassword.setOnClickListener {
             startIntentFor(LoginActivity::class.java)
+            finishAffinity()
         }
     }
 }

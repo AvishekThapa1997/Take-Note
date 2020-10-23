@@ -6,11 +6,20 @@ import android.os.Bundle
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.widget.ProgressBar
+import androidx.constraintlayout.widget.Group
+import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModel
 import com.app.takenote.pojo.User
 import com.app.takenote.utility.BUNDLE
 import com.app.takenote.utility.CURRENT_USER
 import com.app.takenote.utility.FULL_NAME
 import com.app.takenote.utility.showMessage
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
+import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.android.viewmodel.koin.viewModel
+import org.koin.core.KoinComponent
 
 abstract class BaseActivity : AppCompatActivity() {
     open val layoutResourceId = 0
@@ -26,21 +35,42 @@ abstract class BaseActivity : AppCompatActivity() {
                 )
             }
         }
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+        //window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         setContentView(layoutResourceId)
     }
 
-    fun <T> startIntentFor(activityClass: Class<T>, currentUser: User? = null) {
+    protected open fun <T> startIntentFor(
+        activityClass: Class<T>,
+        currentUser: User? = null,
+        transitionBundle: Bundle? = null
+    ) {
         val intent = Intent(this, activityClass)
         currentUser?.let {
             val bundle = Bundle()
             bundle.putParcelable(CURRENT_USER, currentUser)
-            intent.putExtra(BUNDLE,bundle)
+            intent.putExtra(BUNDLE, bundle)
         }
-        startActivity(intent)
+        transitionBundle?.let {
+            startActivity(intent, it)
+        } ?: run {
+            startActivity(intent)
+        }
+
     }
 
     protected fun showMessage(message: String) =
         findViewById<View>(android.R.id.content).showMessage(message)
 
+    protected fun chooseProfilePicture() {
+        CropImage.activity().setGuidelines(CropImageView.Guidelines.ON)
+            .start(this)
+    }
+
+    protected fun View.showView() {
+        visibility = View.VISIBLE
+    }
+
+    protected fun View.hideView(status: Int) {
+        visibility = status
+    }
 }
