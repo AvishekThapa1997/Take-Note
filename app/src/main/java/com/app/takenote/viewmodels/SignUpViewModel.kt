@@ -4,55 +4,35 @@ package com.app.takenote.viewmodels
 import android.util.Log
 import com.app.takenote.extensions.runIO
 import com.app.takenote.pojo.User
+import com.app.takenote.repository.AuthRepository
 import com.app.takenote.utility.*
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.firestore.FirebaseFirestore
-import org.koin.core.inject
+import com.google.firebase.firestore.util.Executors
 
-class SignUpViewModel : AuthViewModel() {
+
+class SignUpViewModel(authRepository: AuthRepository) : AuthViewModel(authRepository) {
     override fun signUpUser(
-        fullName: String,
         email: String,
         password: String,
-        confirmPassword: String
+        confirmPassword: String,
     ) {
         runIO {
             val validationMessage =
-                DataValidation.validateUserCredentials(fullName, email, password, confirmPassword)
+                DataValidation.validateUserCredentials(email, password, confirmPassword)
             if (validationMessage != VALID)
                 errorMessage(validationMessage)
-            else
-                createUser(fullName, email, password)
-
-        }
-    }
-
-    private fun createUser(fullName: String, email: String, password: String) {
-        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val uid = firebaseAuth.currentUser?.uid
-                storeData(fullName, email, password, uid)
+            else {
+                createUser(email,password)
             }
-        }.addOnFailureListener { exception ->
-            when (exception) {
-                is FirebaseAuthUserCollisionException -> errorMessage(EMAIL_IS_ALREADY_REGISTERED)
-                else -> errorMessage(SOMETHING_WENT_WRONG)
-            }
+
         }
     }
 
-    private fun storeData(fullName: String, email: String, password: String, id: String?) {
-        val primaryId = uniqueId(id,email)
-        val encryptPassword = encodeString(password)
-        val dataToStore = mutableMapOf(
-            FULL_NAME to fullName,
-            EMAIL to email, PASSWORD to encryptPassword
-        )
-        fireStore.collection(COLLECTION_NAME).document(primaryId).set(dataToStore).addOnCompleteListener {task ->
-            if(task.isSuccessful)
-               currentUser(User(fullName,email))
-        }.addOnFailureListener{ exception ->
-            Log.i("TAG", "${exception.message}")
-        }
+    private suspend fun createUser(email: String, password: String) {
+        authRepository.signUpUser(email, password, { user ->
+            currentUser(user)
+        }, { error ->
+            errorMessage(error)
+        })
     }
+
 }
