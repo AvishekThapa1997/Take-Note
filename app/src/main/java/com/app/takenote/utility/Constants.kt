@@ -45,3 +45,15 @@ const val INCORRECT_PASSWORD = "Incorrect Password"
 const val CURRENT_USER = "user"
 
 const val BUNDLE = "bundle"
+
+const val IMAGE_URL ="image_url"
+
+const val TRY_AGAIN = "Try Again!!"
+
+const val UNABLE_TO_UPLOAD = "Unable to upload photo"
+
+const val UNABLE_TO_REGISTER_USER = "Unable to register user !!"
+
+const val PHOTO_UPLOADED_SUCCESSFULLY = "Photo uploaded successfully !!"
+
+const val CURRENT_USER_NAME = "fullname"
