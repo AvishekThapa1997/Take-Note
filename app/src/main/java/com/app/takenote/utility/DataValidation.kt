@@ -15,17 +15,16 @@ object DataValidation {
     }
 
     fun validateUserCredentials(
-        fullName: String,
         email: String,
         password: String,
         confirmPassword: String
     ): String {
-        if (fullName.isEmptyOrIsBlank() || email.isEmptyOrIsBlank() || password.isEmptyOrIsBlank() || confirmPassword.isEmptyOrIsBlank())
+        if (email.isEmptyOrIsBlank() || password.isEmptyOrIsBlank() || confirmPassword.isEmptyOrIsBlank())
             return FIELD_CANNOT_BE_EMPTY
         if (email.invalidEmail())
             return INVALID_EMAIL
-        if (!fullName.minLength(8))
-            return FULLNAME_SHOULD_CONTAIN_ATLEAST_EIGHT_CHARACTERS
+//        if (!fullName.minLength(8))
+//            return FULLNAME_SHOULD_CONTAIN_ATLEAST_EIGHT_CHARACTERS
         val passwordValidationMessage = password.validPassword()
         if (passwordValidationMessage != VALID_PASSWORD)
             return passwordValidationMessage
