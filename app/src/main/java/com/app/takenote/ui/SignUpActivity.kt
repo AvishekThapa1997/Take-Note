@@ -31,10 +31,12 @@ class SignUpActivity : BaseActivity() {
                     startIntentFor(AddProfileActivity::class.java, response.data)
                     finishAffinity()
                 }
-                is Error -> showMessage(response.message)
+                is Error -> {
+                    showMessage(response.message)
+                    signUpProgress.hideView(View.GONE)
+                    enabledGroup()
+                }
             }
-            signUpProgress.hideView(View.GONE)
-            enabledGroup()
         }
     }
 

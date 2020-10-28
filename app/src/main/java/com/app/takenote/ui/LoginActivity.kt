@@ -50,10 +50,12 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
                         finishAffinity()
                     }
                 }
-                is Error -> showMessage(response.message)
+                is Error -> {
+                    showMessage(response.message)
+                    loginProgress.hideView(View.GONE)
+                    enabledGroup()
+                }
             }
-            loginProgress.hideView(View.GONE)
-            enabledGroup()
         }
     }
     private fun enabledGroup() {
