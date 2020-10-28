@@ -1,5 +1,6 @@
 package com.app.takenote.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -46,5 +47,10 @@ open class AuthViewModel(protected val authRepository: AuthRepository) : ViewMod
         } else {
             encodeString(email)
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        authRepository.clearRegisterNetworkConnection()
     }
 }

@@ -12,7 +12,8 @@ class TakeNoteApplication : Application() {
         startKoin {
             androidLogger()
             androidContext(this@TakeNoteApplication)
-            loadKoinModules(arrayListOf(firebaseModules,repositoryModules,viewModelModules))
+            loadKoinModules(arrayListOf(firebaseModules,repositoryModules,viewModelModules,
+                networkModules))
         }
     }
 }

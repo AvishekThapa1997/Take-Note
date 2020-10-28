@@ -28,7 +28,13 @@ class AddProfileViewModel(
         runIO {
             profileRepository.uploadImage(uid, imagePath, { imageUrl ->
                 _imageUrl.postValue(Success(imageUrl))
-                dataRepository.updateData(uid, mutableMapOf(IMAGE_URL to imageUrl))
+                dataRepository.updateData(
+                    uid,
+                    mutableMapOf(IMAGE_URL to imageUrl),
+                    null,
+                    { uploadErrorMessage ->
+                        _imageUrl.postValue(Error(uploadErrorMessage))
+                    })
             }, { error ->
                 _imageUrl.postValue(Error(error))
             })
@@ -51,5 +57,11 @@ class AddProfileViewModel(
                 _currentUser.postValue(Error(FIELD_CANNOT_BE_EMPTY))
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        profileRepository.clearRegisterNetworkConnection()
+        dataRepository.clearRegisterNetworkConnection()
     }
 }

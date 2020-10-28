@@ -3,6 +3,7 @@
     package="com.app.takenote">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:name=".di.TakeNoteApplication"
@@ -13,7 +14,10 @@
         android:roundIcon="@mipmap/app_icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.LoginActivity"/>
+        <activity android:name=".ui.DemoActivity">
+
+        </activity>
+        <activity android:name=".ui.LoginActivity" />
         <activity android:name=".ui.AddProfileActivity" />
         <activity android:name=".ui.ProfileActivity" />
         <activity android:name=".ui.HomeActivity" />

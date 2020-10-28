@@ -57,3 +57,9 @@ const val UNABLE_TO_REGISTER_USER = "Unable to register user !!"
 const val PHOTO_UPLOADED_SUCCESSFULLY = "Photo uploaded successfully !!"
 
 const val CURRENT_USER_NAME = "fullname"
+
+const val PRIMARY_ID = "primaryId"
+
+const val SUCCESSFULLY_NAME_UPDATED = "Successfully name updated !!"
+
+const val NO_INTERNET_CONNECTION = "No connection available!!"
