@@ -84,6 +84,7 @@ class AddProfileActivity : BaseActivity() {
                 is Error -> {
                     showMessage(response.message)
                     uploadProgress.hide()
+                    addPhotoIcon.showView()
                 }
             }
         }
