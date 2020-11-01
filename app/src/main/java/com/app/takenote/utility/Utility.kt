@@ -1,7 +1,10 @@
 package com.app.takenote.utility
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.os.IBinder
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
@@ -18,13 +21,13 @@ fun View.showMessage(message: String) {
     Snackbar.make(this, message, Snackbar.LENGTH_LONG).show()
 }
 
-fun encodeString(data: String): String {
-    val salt = AesCbcWithIntegrity.saltString(AesCbcWithIntegrity.generateSalt())
-    val keys: AesCbcWithIntegrity.SecretKeys =
-        AesCbcWithIntegrity.generateKeyFromPassword(data, salt)
-    val cipherTextIvMac = AesCbcWithIntegrity.encrypt(data, keys)
-    return cipherTextIvMac.toString()
-}
+//fun encodeString(data: String): String {
+//    val salt = AesCbcWithIntegrity.saltString(AesCbcWithIntegrity.generateSalt())
+//    val keys: AesCbcWithIntegrity.SecretKeys =
+//        AesCbcWithIntegrity.generateKeyFromPassword(data, salt)
+//    val cipherTextIvMac = AesCbcWithIntegrity.encrypt(data, keys)
+//    return cipherTextIvMac.toString()
+//}
 
 fun Context.showImage(
     imageUrl: String,
@@ -58,9 +61,23 @@ fun Context.showImage(
     }).into(targetView)
 }
 
-fun Context.keyBoardVisibility(flags : Int) {
-    val inputMethodManager : InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    inputMethodManager.toggleSoftInput(flags,0)
+fun Activity.hideKeyboard(token: IBinder? = null) {
+    val inputMethodManager: InputMethodManager =
+        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    token?.let {
+        inputMethodManager.hideSoftInputFromWindow(
+            token,
+            0
+        )
+    }
 }
+
+//fun Activity.openKeyboard() {
+//    val inputMethodManager: InputMethodManager =
+//        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//        inputMethodManager.toggleSoftInput(InputMethodManager.RESULT_SHOWN,0)
+//    }
+
+
 
 
