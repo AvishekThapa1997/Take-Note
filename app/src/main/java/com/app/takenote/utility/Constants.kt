@@ -38,15 +38,15 @@ const val EMAIL = "email"
 
 const val PASSWORD = "password"
 
-const val EMAIL_NOT_REGISTERED = "Email is not registered!"
+const val EMAIL_NOT_REGISTERED = "Email is not registered!!"
 
 const val INCORRECT_PASSWORD = "Incorrect Password"
 
-const val CURRENT_USER = "user"
+const val CURRENT_USER_ID = "user_id"
 
 const val BUNDLE = "bundle"
 
-const val IMAGE_URL ="image_url"
+const val IMAGE_URL = "image_url"
 
 const val TRY_AGAIN = "Try Again!!"
 
@@ -63,3 +63,7 @@ const val PRIMARY_ID = "primaryId"
 const val SUCCESSFULLY_NAME_UPDATED = "Successfully name updated !!"
 
 const val NO_INTERNET_CONNECTION = "No connection available!!"
+
+const val GENERATED_DATE = "generated_date"
+
+const val CURRENT_USER = "current_user"
