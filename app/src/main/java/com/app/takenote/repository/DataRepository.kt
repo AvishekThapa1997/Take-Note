@@ -4,10 +4,8 @@ import com.app.takenote.pojo.User
 
 interface DataRepository : BaseRepository {
     fun storeCurrentUserData(
-        primaryId: String,
-        email: String,
-        password: String,
-        onSuccess: (User) -> Unit,
+       userData : Map<String,String>,
+       primaryId: String,
         onError: (String) -> Unit
     )
 
@@ -15,8 +13,7 @@ interface DataRepository : BaseRepository {
 
     fun updateData(
         primaryId: String,
-        updatedData: Map<String, String>,
-        onSuccess: ((User) -> Unit)? = null,
-        onError: ((String) -> Unit)? = null
+        updatedData: Map<String,String>,
+        onError: ((String) -> Unit)
     )
 }
