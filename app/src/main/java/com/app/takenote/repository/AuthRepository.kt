@@ -6,14 +6,14 @@ interface AuthRepository:BaseRepository {
     suspend  fun loginUser(
         email: String,
         password: String,
-        success: (User) -> Unit,
+        success: (String?) -> Unit,
         error: (String) -> Unit
     )
 
     suspend fun signUpUser(
         email: String,
         password: String,
-        success: (User) -> Unit,
+        success: (String?) -> Unit,
         error: (String) -> Unit
     )
 }
