@@ -3,7 +3,7 @@ package com.app.takenote.extensions
 import com.app.takenote.utility.*
 import com.wajahatkarim3.easyvalidation.core.view_ktx.*
 
-fun String.isEmptyOrIsBlank() = this.isEmpty() && this.isBlank()
+fun String?.isEmptyOrIsBlank() = this.isNullOrBlank() && this.isNullOrEmpty()
 
 fun String.invalidEmail() = !this.validEmail()
 
