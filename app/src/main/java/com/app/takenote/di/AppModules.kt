@@ -1,8 +1,8 @@
 package com.app.takenote.di
 
-import com.app.takenote.repository.AuthRepository
-import com.app.takenote.repository.DataRepository
+
 import com.app.takenote.repositoryimpl.AuthRepositoryImpl
+import com.app.takenote.repositoryimpl.BaseRepositoryImpl
 import com.app.takenote.repositoryimpl.DataRepositoryImpl
 import com.app.takenote.repositoryimpl.ProfileRepositoryImpl
 import com.app.takenote.utility.NetworkCheckerUtility
@@ -21,13 +21,15 @@ import org.koin.dsl.module
 
 val viewModelModules = module {
     viewModel { LoginViewModel(get<AuthRepositoryImpl>()) }
-    viewModel { SignUpViewModel(get<AuthRepositoryImpl>()) }
+    viewModel { SignUpViewModel(get<AuthRepositoryImpl>(),get<DataRepositoryImpl>()) }
     viewModel { AddProfileViewModel(get<ProfileRepositoryImpl>(), get<DataRepositoryImpl>()) }
     viewModel { ProfileViewModel(get<ProfileRepositoryImpl>(), get<DataRepositoryImpl>()) }
 }
 val firebaseModules = module {
     factory { Firebase.auth }
-    factory { Firebase.firestore }
+    factory {
+        Firebase.firestore
+    }
     factory {
         val storage: FirebaseStorage = Firebase.storage
         storage.maxDownloadRetryTimeMillis = 5000
@@ -47,7 +49,10 @@ val repositoryModules = module {
     single {
         ProfileRepositoryImpl(get())
     }
+    single {
+        BaseRepositoryImpl()
+    }
 }
 val networkModules = module {
-    factory { NetworkCheckerUtility(androidContext()) }
+    single { NetworkCheckerUtility(androidContext()) }
 }
