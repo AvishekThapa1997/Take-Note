@@ -3,12 +3,16 @@ package com.app.takenote.ui
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.constraintlayout.widget.Group
 import com.app.takenote.R
 import com.app.takenote.extensions.isEmptyOrIsBlank
 import com.app.takenote.extensions.onBackground
 import com.app.takenote.pojo.User
 import com.app.takenote.utility.*
 import com.app.takenote.viewmodels.AddProfileViewModel
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.ListenerRegistration
 import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.add_profile.*
 import kotlinx.coroutines.Dispatchers
@@ -18,24 +22,21 @@ import org.koin.android.viewmodel.ext.android.viewModel
 class AddProfileActivity : BaseActivity() {
     override val layoutResourceId = R.layout.add_profile
     private val addProfileViewModel: AddProfileViewModel by viewModel()
-    private var uid: String? = ""
     private var currentUser: User? = null
+    private var realTimeListener: ListenerRegistration? = null
+    private lateinit var group: Group
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        observeImageUrl()
-        observeCurrentUser()
-        if (currentUser == null) {
-            intent.getBundleExtra(BUNDLE)?.apply {
-                currentUser = getParcelable(CURRENT_USER)
-                uid = currentUser?.uid
-            }
-        } else {
-            uid = currentUser?.uid
+        intent.getBundleExtra(BUNDLE)?.apply {
+            currentUser = getParcelable(CURRENT_USER)
         }
-        currentUser?.imageUri?.apply {
-            if (!isEmptyOrIsBlank()) {
+        group = findViewById(R.id.group)
+        currentUser?.apply {
+            if (!imageUri?.isEmptyOrIsBlank()!!) {
                 addPhotoIcon.hideView(View.GONE)
-                showImage(this, userProfileImage)
+                showImage(imageUri!!, userProfileImage)
+            } else {
+                addPhotoIcon.showView()
             }
         }
         addPhotoIcon.setOnClickListener {
@@ -43,11 +44,51 @@ class AddProfileActivity : BaseActivity() {
         }
         next.setOnClickListener {
             val fullName = fullName.text.toString()
-            addProfileViewModel.setName(uid!!, fullName)
-            nextProgress.show()
+            nextProgress.showView()
             addPhotoIcon.isEnabled = false
             disabledGroup()
+            addProfileViewModel.setName(currentUser?.uid!!, fullName) { errorMessage ->
+                showMessage(errorMessage)
+                nextProgress.hideView(View.GONE)
+                addPhotoIcon.isEnabled = true
+                enabledGroup()
+            }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        realTimeListener = firestore.collection(COLLECTION_NAME).document(currentUser?.uid!!)
+            .addSnapshotListener { documentSnapshot: DocumentSnapshot?, error: FirebaseFirestoreException? ->
+                if (documentSnapshot != null && documentSnapshot.data != null) {
+                    val updatedFullName =
+                        documentSnapshot[FULL_NAME].toString()
+                    val updatedImageUri =
+                        documentSnapshot[IMAGE_URL].toString()
+                    if (currentUser?.imageUri != updatedImageUri) {
+                        showImage(updatedImageUri, userProfileImage, { successMessage ->
+                            uploadProgress.hide()
+                            showMessage(successMessage)
+                        }, { errorMessage ->
+                            showMessage(errorMessage)
+                        })
+                    }
+                    if (currentUser?.fullName != updatedFullName) {
+                        currentUser?.fullName = updatedFullName
+                        startIntentFor(HomeActivity::class.java, currentUser)
+                        finishAffinity()
+                    }
+                } else {
+                    if (error != null) {
+                        showMessage(SOMETHING_WENT_WRONG)
+                    }
+                }
+            }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        realTimeListener?.remove()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -61,48 +102,19 @@ class AddProfileActivity : BaseActivity() {
                     withContext(Dispatchers.Main) {
                         addPhotoIcon.visibility = View.GONE
                         uploadProgress.show()
-                        addProfileViewModel.uploadPhoto(filePath!!, uid!!)
+                        addProfileViewModel.uploadPhoto(
+                            filePath!!,
+                            currentUser?.uid!!
+                        ) { errorMessage ->
+                            showMessage(errorMessage)
+                            uploadProgress.hide()
+                            addPhotoIcon.showView()
+                        }
                     }
                 }
             }
         } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE)
             showMessage(UNABLE_TO_UPLOAD)
-    }
-
-    private fun observeImageUrl() {
-        addProfileViewModel.imageUrl.observe(this) { response ->
-            when (response) {
-                is Success -> {
-                    showImage(response.data, userProfileImage, { successMessage ->
-                        showMessage(successMessage)
-                        uploadProgress.hide()
-                    }, { errorMessage ->
-                        showMessage(errorMessage)
-                        uploadProgress.hide()
-                    })
-                }
-                is Error -> {
-                    showMessage(response.message)
-                    uploadProgress.hide()
-                    addPhotoIcon.showView()
-                }
-            }
-        }
-    }
-
-    private fun observeCurrentUser() {
-        addProfileViewModel.currentUser.observe(this) { response ->
-            when (response) {
-                is Success -> {
-                    startIntentFor(HomeActivity::class.java, response.data)
-                    finishAffinity()
-                }
-                is Error -> showMessage(response.message)
-            }
-            nextProgress.hide()
-            enabledGroup()
-            addPhotoIcon.isEnabled = true
-        }
     }
 
     private fun enabledGroup() {
