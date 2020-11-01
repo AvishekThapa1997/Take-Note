@@ -1,21 +1,28 @@
 package com.app.takenote.ui
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import com.app.takenote.pojo.User
 import com.app.takenote.utility.BUNDLE
 import com.app.takenote.utility.CURRENT_USER
+import com.app.takenote.utility.CURRENT_USER_ID
 import com.app.takenote.utility.showMessage
+import com.google.firebase.firestore.FirebaseFirestore
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
+import org.koin.android.ext.android.get
 
 abstract class BaseActivity : AppCompatActivity() {
     open val layoutResourceId = 0
     open fun enabledFullScreen(): Boolean = true
+    protected val firestore: FirebaseFirestore = get()
+    protected var observing = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (enabledFullScreen()) {
@@ -29,7 +36,9 @@ abstract class BaseActivity : AppCompatActivity() {
         }
         //window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         setContentView(layoutResourceId)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
+
     protected open fun <T> startIntentFor(
         activityClass: Class<T>,
         currentUser: User? = null,
@@ -62,6 +71,7 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     protected fun View.hideView(status: Int) {
+        Log.i("TAG", "hideView: ")
         visibility = status
     }
 }
