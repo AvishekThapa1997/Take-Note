@@ -4,10 +4,10 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class User(
-    val fullName: String?,
+    var fullName: String?,
     val email: String?,
     val password: String?,
-    val imageUri: String?,
+    var imageUri: String?,
     val uid: String?
 ) : Parcelable {
     constructor(fullName: String?, email: String?, imageUri: String?, uid: String?) : this(
@@ -17,7 +17,8 @@ data class User(
         imageUri,
         uid
     )
-    constructor(email: String?, uid: String?) : this("", email, "", "", uid)
+
+    constructor(email: String?, uid: String?, imageUri: String?) : this("", email, "", imageUri, uid)
 
     constructor(source: Parcel) : this(
         source.readString(),
