@@ -11,7 +11,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 
 class AuthRepositoryImpl(
     private val firebaseAuth: FirebaseAuth,
-) : AuthRepository, BaseRepositoryImpl() {
+) : AuthRepository{
     override suspend fun loginUser(
         email: String,
         password: String,
@@ -57,7 +57,4 @@ class AuthRepositoryImpl(
             }
     }
 
-    override fun clearRegisterNetworkConnection() {
-        super.clearRegisterNetworkConnection()
-    }
 }

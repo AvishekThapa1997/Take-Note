@@ -1,14 +1,13 @@
 package com.app.takenote.repositoryimpl
 
-import android.util.Log
+
 import com.app.takenote.pojo.User
 import com.app.takenote.repository.DataRepository
 import com.app.takenote.utility.*
 import com.google.firebase.firestore.FirebaseFirestore
-import java.util.*
 
-class DataRepositoryImpl(private val fireStore: FirebaseFirestore) : DataRepository,
-    BaseRepositoryImpl() {
+
+class DataRepositoryImpl(private val fireStore: FirebaseFirestore) : DataRepository {
     override fun getCurrentUserData(
         primaryId: String,
         onSuccess: (User) -> Unit,
@@ -38,10 +37,6 @@ class DataRepositoryImpl(private val fireStore: FirebaseFirestore) : DataReposit
             .addOnFailureListener {
                 onError.invoke(SOMETHING_WENT_WRONG)
             }
-    }
-
-    override fun clearRegisterNetworkConnection() {
-        super.clearRegisterNetworkConnection()
     }
 
     override fun storeCurrentUserData(
