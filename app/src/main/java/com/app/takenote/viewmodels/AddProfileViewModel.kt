@@ -1,8 +1,8 @@
 package com.app.takenote.viewmodels
 
 
+
 import com.app.takenote.extensions.isEmptyOrIsBlank
-import com.app.takenote.extensions.runIO
 import com.app.takenote.repository.DataRepository
 import com.app.takenote.repository.ProfileRepository
 import com.app.takenote.utility.*
@@ -21,31 +21,31 @@ class AddProfileViewModel(
 //    val errorMessage: LiveData<String>
 //        get() = _errorMessage
 
-    fun uploadPhoto(imagePath: String, uid: String, error: (String) -> Unit) {
+
+    fun uploadPhoto(imagePath: String, uid: String) {
         profileRepository.uploadImage(uid, imagePath, { imageUrl ->
             dataRepository.updateData(
                 uid,
-                mutableMapOf(IMAGE_URL to imageUrl),
-                error
-            )
-        }, error)
-    }
-
-    fun setName(primaryId: String, name: String, error: (String) -> Unit) {
-        if (!name.isEmptyOrIsBlank()) {
-            dataRepository.updateData(
-                primaryId,
-                mutableMapOf(FULL_NAME to name),
-                error
-            )
-        } else {
-            error(FIELD_CANNOT_BE_EMPTY)
+                mutableMapOf(IMAGE_URL to imageUrl)
+            ) { updateError ->
+                setImageUploadError(updateError)
+            }
+        }) { uploadError ->
+            setImageUploadError(uploadError)
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        profileRepository.clearRegisterNetworkConnection()
-        dataRepository.clearRegisterNetworkConnection()
+    fun setName(primaryId: String, name: String) {
+        if (!name.isEmptyOrIsBlank()) {
+            dataRepository.updateData(
+                primaryId,
+                mutableMapOf(FULL_NAME to name)
+            ) { updateError ->
+                setUpdateNameError(updateError)
+            }
+        } else {
+            setUpdateNameError(FIELD_CANNOT_BE_EMPTY)
+        }
     }
+
 }
