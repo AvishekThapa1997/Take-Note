@@ -2,10 +2,8 @@ package com.app.takenote.di
 
 
 import com.app.takenote.repositoryimpl.AuthRepositoryImpl
-import com.app.takenote.repositoryimpl.BaseRepositoryImpl
 import com.app.takenote.repositoryimpl.DataRepositoryImpl
 import com.app.takenote.repositoryimpl.ProfileRepositoryImpl
-import com.app.takenote.utility.NetworkCheckerUtility
 import com.app.takenote.viewmodels.AddProfileViewModel
 import com.app.takenote.viewmodels.LoginViewModel
 import com.app.takenote.viewmodels.ProfileViewModel
@@ -15,7 +13,6 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
-import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -41,7 +38,7 @@ val firebaseModules = module {
 
 val repositoryModules = module {
     single {
-        AuthRepositoryImpl(get(), get<DataRepositoryImpl>())
+        AuthRepositoryImpl(get())
     }
     single {
         DataRepositoryImpl(get())
@@ -49,10 +46,4 @@ val repositoryModules = module {
     single {
         ProfileRepositoryImpl(get())
     }
-    single {
-        BaseRepositoryImpl()
-    }
-}
-val networkModules = module {
-    single { NetworkCheckerUtility(androidContext()) }
 }
