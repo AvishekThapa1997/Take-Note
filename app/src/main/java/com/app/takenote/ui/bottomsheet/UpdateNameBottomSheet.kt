@@ -1,20 +1,26 @@
 package com.app.takenote.ui.bottomsheet
 
+import android.content.Context
 import android.content.DialogInterface
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.DialogFragment
 import com.app.takenote.R
-import com.app.takenote.utility.CURRENT_USER_NAME
-import com.app.takenote.utility.keyBoardVisibility
+import com.app.takenote.utility.*
+import com.app.takenote.viewmodels.ProfileViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.android.synthetic.main.update_username_bottom_sheet.*
 import kotlinx.android.synthetic.main.update_username_bottom_sheet.view.*
+import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 class UpdateNameBottomSheet : BottomSheetDialogFragment() {
+    private val profileViewModel: ProfileViewModel by sharedViewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogStyle)
@@ -30,19 +36,56 @@ class UpdateNameBottomSheet : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val currentUsername = arguments?.getString(CURRENT_USER_NAME, "")
+        dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        dialog?.window?.statusBarColor = Color.TRANSPARENT
+        var currentUsername = ""
+        var primaryId = ""
+        arguments?.apply {
+            currentUsername = getString(CURRENT_USER_NAME, "")
+            primaryId = getString(PRIMARY_ID, "")
+        }
         view.apply {
             updatedName.text = Editable.Factory.getInstance().newEditable(currentUsername)
-            context.keyBoardVisibility(InputMethodManager.SHOW_FORCED)
             cancel.setOnClickListener {
-                context.keyBoardVisibility(InputMethodManager.RESULT_HIDDEN)
+                activity?.hideKeyboard(view.windowToken)
                 dismiss()
+            }
+            save.setOnClickListener {
+                val updatedName = updatedName.text.toString()
+                progress.visibility = View.VISIBLE
+                hideViews()
+                if (currentUsername != updatedName) {
+                    profileViewModel.updateName(primaryId, updatedName) { errorMessage ->
+                        showMessage(errorMessage)
+                    }
+                } else {
+                    dismiss()
+                }
             }
         }
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        updatedName.requestFocus()
+        openKeyboard()
+    }
+
+    private fun openKeyboard() {
+        val inputMethodManager: InputMethodManager =
+            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.showSoftInput(updatedName, InputMethodManager.SHOW_IMPLICIT)
+    }
+
+
+    private fun hideViews() {
+        cancel.visibility = View.GONE
+        save.visibility = View.GONE
+    }
+
     override fun onCancel(dialog: DialogInterface) {
-        view?.context?.keyBoardVisibility(InputMethodManager.RESULT_HIDDEN)
+        activity?.hideKeyboard(view?.windowToken)
         super.onCancel(dialog)
     }
+
 }
