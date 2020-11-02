@@ -38,12 +38,12 @@
         android:id="@+id/profileNameInitialLetter"
         android:layout_width="136dp"
         android:layout_height="136dp"
-        android:visibility="invisible"
         android:background="@drawable/circular_textview"
         android:fontFamily="@font/regular"
         android:gravity="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Display3"
         android:textColor="@android:color/white"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="@id/endGuideline"
         app:layout_constraintStart_toStartOf="@id/startGuideline"
         app:layout_constraintTop_toTopOf="@id/topGuideline" />
@@ -55,6 +55,27 @@
         app:layout_constraintEnd_toEndOf="@id/endGuideline"
         app:layout_constraintStart_toStartOf="@id/startGuideline"
         app:layout_constraintTop_toTopOf="@id/topGuideline" />
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmerLayout"
+        android:layout_width="136dp"
+        android:layout_height="136dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/endGuideline"
+        app:layout_constraintStart_toStartOf="@id/startGuideline"
+        app:layout_constraintTop_toTopOf="@id/topGuideline"
+        app:shimmer_auto_start="true">
+
+        <View
+            android:layout_width="136dp"
+            android:layout_height="136dp"
+            android:background="@drawable/circular_image_drawable"
+            android:contentDescription="@null"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/floatingActionButtonSideBarrier"
@@ -126,7 +147,24 @@
         app:layout_constraintEnd_toEndOf="@id/endGuideline"
         app:layout_constraintStart_toStartOf="@id/usernameHeader"
         app:layout_constraintTop_toBottomOf="@id/usernameHeader" />
-
+    <EditText
+        android:id="@+id/updatedUserProfileName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:visibility="gone"
+        android:inputType="text"
+        android:background="@android:color/transparent"
+        android:fontFamily="@font/regular"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/lightBlack"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/endGuideline"
+        app:layout_constraintStart_toStartOf="@id/usernameHeader"
+        app:layout_constraintTop_toBottomOf="@id/usernameHeader"
+        tools:ignore="LabelFor"
+        android:cursorVisible="true"
+        android:importantForAutofill="no" />
     <View
         android:id="@+id/separator"
         android:layout_width="0dp"
