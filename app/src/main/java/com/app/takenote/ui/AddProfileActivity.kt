@@ -47,12 +47,7 @@ class AddProfileActivity : BaseActivity() {
             nextProgress.showView()
             addPhotoIcon.isEnabled = false
             disabledGroup()
-            addProfileViewModel.setName(currentUser?.uid!!, fullName) { errorMessage ->
-                showMessage(errorMessage)
-                nextProgress.hideView(View.GONE)
-                addPhotoIcon.isEnabled = true
-                enabledGroup()
-            }
+            addProfileViewModel.setName(currentUser?.uid!!, fullName)
         }
         observeError()
     }
