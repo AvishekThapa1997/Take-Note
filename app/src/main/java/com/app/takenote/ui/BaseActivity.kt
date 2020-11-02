@@ -4,14 +4,12 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import com.app.takenote.pojo.User
 import com.app.takenote.utility.BUNDLE
 import com.app.takenote.utility.CURRENT_USER
-import com.app.takenote.utility.CURRENT_USER_ID
 import com.app.takenote.utility.showMessage
 import com.google.firebase.firestore.FirebaseFirestore
 import com.theartofdev.edmodo.cropper.CropImage
@@ -71,7 +69,6 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     protected fun View.hideView(status: Int) {
-        Log.i("TAG", "hideView: ")
         visibility = status
     }
 }
