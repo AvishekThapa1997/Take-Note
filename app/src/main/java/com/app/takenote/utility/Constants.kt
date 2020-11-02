@@ -60,10 +60,4 @@ const val CURRENT_USER_NAME = "fullname"
 
 const val PRIMARY_ID = "primaryId"
 
-const val SUCCESSFULLY_NAME_UPDATED = "Successfully name updated !!"
-
-const val NO_INTERNET_CONNECTION = "No connection available!!"
-
-const val GENERATED_DATE = "generated_date"
-
 const val CURRENT_USER = "current_user"
