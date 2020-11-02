@@ -2,7 +2,6 @@ package com.app.takenote.ui
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import com.app.takenote.R
 import com.app.takenote.pojo.User
