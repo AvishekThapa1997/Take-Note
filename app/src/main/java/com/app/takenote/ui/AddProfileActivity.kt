@@ -54,6 +54,26 @@ class AddProfileActivity : BaseActivity() {
                 enabledGroup()
             }
         }
+        observeError()
+    }
+
+    private fun observeError() {
+        addProfileViewModel.errorMessage.observe(this) { error ->
+            when (error) {
+                is ImageUploadError -> {
+                    showMessage(error.message)
+                    uploadProgress.hide()
+                    addPhotoIcon.showView()
+                }
+                is NameUpdateError -> {
+                    showMessage(error.message)
+                    nextProgress.hideView(View.GONE)
+                    addPhotoIcon.isEnabled = true
+                    enabledGroup()
+                }
+            }
+
+        }
     }
 
     override fun onStart() {
@@ -105,11 +125,7 @@ class AddProfileActivity : BaseActivity() {
                         addProfileViewModel.uploadPhoto(
                             filePath!!,
                             currentUser?.uid!!
-                        ) { errorMessage ->
-                            showMessage(errorMessage)
-                            uploadProgress.hide()
-                            addPhotoIcon.showView()
-                        }
+                        )
                     }
                 }
             }

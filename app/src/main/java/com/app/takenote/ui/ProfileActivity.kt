@@ -4,10 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import com.app.takenote.R
+import com.app.takenote.extensions.isEmptyOrIsBlank
 import com.app.takenote.pojo.User
 import com.app.takenote.ui.bottomsheet.UpdateNameBottomSheet
 import com.app.takenote.utility.*
 import com.app.takenote.viewmodels.ProfileViewModel
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.activity_profile.userProfileImage
@@ -26,18 +29,96 @@ class ProfileActivity : BaseActivity() {
 //        window.allowReturnTransitionOverlap = false
 //        window.allowEnterTransitionOverlap = false
         super.onCreate(savedInstanceState)
+        intent.getBundleExtra(BUNDLE)?.apply {
+            currentUser = getParcelable(CURRENT_USER)
+        }
 //        intent.getBundleExtra(BUNDLE)?.apply {
 //            if (containsKey(CURRENT_USER))
 //                currentUser = getParcelable(CURRENT_USER)
 //        }
-//        setProfile()
-//        editUsername.setOnClickListener {
-//            showUpdateNameBottomSheet()
-//        }
-//        changeProfilePicture.setOnClickListener {
-//            chooseProfilePicture()
-//        }
+        setProfile()
+        editUsername.setOnClickListener {
+            showUpdateNameBottomSheet()
+        }
+        changeProfilePicture.setOnClickListener {
+            chooseProfilePicture()
+        }
 //        observeUpdatedUser()
+        //observeImageUploadProgress()
+        currentUser?.let {
+            observeRealUpdates(it.uid!!)
+        }
+        observeError()
+    }
+
+    private fun observeError() {
+        profileViewModel.errorMessage.observe(this) { error ->
+            when (error) {
+                is ImageUploadError -> {
+                    stopShimmer()
+                    showMessage(error.message)
+                    if (!currentUser?.imageUri.isEmptyOrIsBlank())
+                        userProfileImage.showView()
+                    else
+                        profileNameInitialLetter.showView()
+                    changeProfilePicture.show()
+                }
+                is NameUpdateError -> {
+                    showMessage(error.message)
+                }
+            }
+        }
+    }
+
+//    private fun observeImageUploadProgress() {
+//        profileViewModel.imageUploadIsInProgress.observe(this) { inProgress ->
+//            Log.i("TAG", "observeImageUploadProgress: $inProgress")
+//            if (inProgress) {
+//                if (!shimmerLayout.isShimmerVisible)
+//                    startShimmer()
+//            }
+//        }
+//    }
+
+    private fun observeRealUpdates(userId: String) {
+        firestore.collection(COLLECTION_NAME).document(userId)
+            .addSnapshotListener { documentSnapshot: DocumentSnapshot?, fireStoreException: FirebaseFirestoreException? ->
+                if (documentSnapshot != null && documentSnapshot.data != null) {
+                    val updatedName = documentSnapshot[FULL_NAME].toString()
+                    val updatedImageUri = documentSnapshot[IMAGE_URL].toString()
+                    if (currentUser?.imageUri != updatedImageUri) {
+                        currentUser?.imageUri = updatedImageUri
+                        applicationContext.showImage(
+                            updatedImageUri,
+                            userProfileImage,
+                            { successMessage ->
+                                if (shimmerLayout.isShimmerVisible)
+                                    stopShimmer()
+                                showMessage(successMessage)
+                                userProfileImage.showView()
+                                profileNameInitialLetter.hideView(View.INVISIBLE)
+                                changeProfilePicture.show()
+                            },
+                            {
+                                showNameInitialLetter()
+                            })
+                    }
+                    if (updatedName != currentUser?.fullName) {
+                        currentUser?.fullName = updatedName
+                        userProfileName.text = currentUser?.fullName
+                        if (currentUser?.imageUri.isEmptyOrIsBlank())
+                            showNameInitialLetter()
+                        closeDialog()
+                    }
+                } else {
+                    if (fireStoreException != null)
+                        showMessage(SOMETHING_WENT_WRONG)
+                }
+            }
+    }
+
+    private fun closeDialog() {
+        sheetDialog?.dismiss()
     }
 
     private fun showNameInitialLetter() {
@@ -46,8 +127,8 @@ class ProfileActivity : BaseActivity() {
     }
 
     private fun setProfile() {
-        if (!currentUser?.imageUri.isNullOrBlank() && !currentUser?.imageUri.isNullOrEmpty())
-            showImage(currentUser?.imageUri!!, userProfileImage, null, {
+        if (!currentUser?.imageUri.isEmptyOrIsBlank())
+            applicationContext.showImage(currentUser?.imageUri!!, userProfileImage, null, {
                 showNameInitialLetter()
             })
         else
@@ -69,41 +150,41 @@ class ProfileActivity : BaseActivity() {
         sheetDialog?.show(supportFragmentManager, "sheet")
     }
 
-    private fun observeUpdatedUser() {
-        profileViewModel.currentUser.observe(this) { response ->
-            when (response) {
-                is Success -> {
-                    if (currentUser?.fullName != response.data.fullName) {
-                        userProfileName.text = response.data.fullName
-                        sheetDialog?.dismiss()
-                        showMessage(SUCCESSFULLY_NAME_UPDATED)
-                    } else
-                        showImage(response.data.imageUri!!, userProfileImage, {
-                            stopShimmer()
-                            profileNameInitialLetter.hideView(View.INVISIBLE)
-                            changeProfilePicture.show()
-                        }, {
-                            showHiddenViews()
-                        })
-                    currentUser = response.data
-                }
-                is Error -> {
-                    showMessage(response.message)
-                    stopShimmer()
-                    showHiddenViews()
-                }
-            }
-            userProfileImage.showView()
-        }
-    }
+//    private fun observeUpdatedUser() {
+//        profileViewModel.currentUser.observe(this) { response ->
+//            when (response) {
+//                is Success -> {
+//                    if (currentUser?.fullName != response.data.fullName) {
+//                        userProfileName.text = response.data.fullName
+//                        sheetDialog?.dismiss()
+//                        showMessage(SUCCESSFULLY_NAME_UPDATED)
+//                    } else
+//                        showImage(response.data.imageUri!!, userProfileImage, {
+//                            stopShimmer()
+//                            profileNameInitialLetter.hideView(View.INVISIBLE)
+//                            changeProfilePicture.show()
+//                        }, {
+//                            showHiddenViews()
+//                        })
+//                    currentUser = response.data
+//                }
+//                is Error -> {
+//                    showMessage(response.message)
+//                    stopShimmer()
+//                    showHiddenViews()
+//                }
+//            }
+//            userProfileImage.showView()
+//        }
+//    }
 
     private fun startShimmer() = shimmerLayout.showView()
 
     private fun stopShimmer() = shimmerLayout.hideView(View.GONE)
 
-    private fun showHiddenViews() {
-        changeProfilePicture.show()
-    }
+//    private fun showHiddenViews() {
+//        changeProfilePicture.show()
+//    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -116,7 +197,10 @@ class ProfileActivity : BaseActivity() {
                 userProfileImage.hideView(View.INVISIBLE)
                 profileNameInitialLetter.hideView(View.INVISIBLE)
                 changeProfilePicture.hide()
-                profileViewModel.updateProfilePhoto(currentUser?.uid!!, filePath!!)
+                profileViewModel.updateProfilePhoto(
+                    currentUser?.uid!!,
+                    filePath!!
+                )
             }
         } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE)
             showMessage(UNABLE_TO_UPLOAD)
