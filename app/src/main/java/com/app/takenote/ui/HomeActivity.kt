@@ -4,6 +4,7 @@ package com.app.takenote.ui
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.core.view.isVisible
 import com.app.takenote.R
 import com.app.takenote.extensions.isEmptyOrIsBlank
 import com.app.takenote.pojo.User
@@ -39,13 +40,14 @@ class HomeActivity : BaseActivity(), View.OnClickListener {
         val intent = intent
         val bundle = intent.getBundleExtra(BUNDLE)
         currentUser = bundle?.getParcelable(CURRENT_USER)
-        Log.i("TAG", "onCreate: $currentUser")
         currentUser?.let {
             if (!it.imageUri.isEmptyOrIsBlank()) {
+                startShimmer()
                 showProfileImage(it)
             } else {
                 if (!it.fullName.isEmptyOrIsBlank()) {
                     showProfileName(it)
+                    stopShimmer()
                 }
             }
         }
@@ -54,8 +56,8 @@ class HomeActivity : BaseActivity(), View.OnClickListener {
         profile.setOnClickListener(this)
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
         realTimeListener = firestore.collection(COLLECTION_NAME).document(currentUser?.uid!!)
             .addSnapshotListener { documentSnapshot: DocumentSnapshot?, error: FirebaseFirestoreException? ->
                 if (documentSnapshot != null && documentSnapshot.data != null) {
@@ -65,7 +67,8 @@ class HomeActivity : BaseActivity(), View.OnClickListener {
                         documentSnapshot[IMAGE_URL].toString()
                     if (currentUser?.imageUri != updatedImageUri) {
                         currentUser?.imageUri = updatedImageUri
-                        showImage(updatedImageUri, userProfileImage)
+                        startShimmer()
+                        showProfileImage(currentUser!!)
                     }
                     if (currentUser?.fullName != updatedFullName) {
                         currentUser?.fullName = updatedFullName
@@ -76,14 +79,33 @@ class HomeActivity : BaseActivity(), View.OnClickListener {
             }
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onPause() {
+        super.onPause()
         realTimeListener.remove()
     }
 
     private fun showProfileImage(currentUser: User) {
-        showImage(currentUser.imageUri!!, profileImage)
+        if(profile.isVisible)
+            profile.hideView(View.INVISIBLE)
+        showImage(currentUser.imageUri!!, profileImage, {
+            if (shimmerLayout.isShimmerVisible)
+                stopShimmer()
+        }, {
+            if (shimmerLayout.isShimmerVisible)
+                stopShimmer()
+            showProfileName(currentUser)
+        })
         profileImage.showView()
+    }
+
+    private fun startShimmer() {
+        shimmerLayout.startShimmer()
+        shimmerLayout.visibility = View.VISIBLE
+    }
+
+    private fun stopShimmer() {
+        shimmerLayout.stopShimmer()
+        shimmerLayout.visibility = View.GONE
     }
 
     private fun showProfileName(currentUser: User) {
@@ -104,7 +126,7 @@ class HomeActivity : BaseActivity(), View.OnClickListener {
 //                startIntentFor(ProfileActivity::class.java, currentUser, options.toBundle())
 //            }
 //        }
-        //startIntentFor(ProfileActivity::class.java, currentUserId)
+        startIntentFor(ProfileActivity::class.java, currentUser)
     }
 
 }
