@@ -2,7 +2,7 @@ package com.app.takenote.repository
 
 import com.app.takenote.pojo.User
 
-interface DataRepository : BaseRepository {
+interface DataRepository{
     fun storeCurrentUserData(
        userData : Map<String,String>,
        primaryId: String,

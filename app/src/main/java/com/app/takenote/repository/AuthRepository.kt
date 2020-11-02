@@ -2,7 +2,7 @@ package com.app.takenote.repository
 
 import com.app.takenote.pojo.User
 
-interface AuthRepository:BaseRepository {
+interface AuthRepository{
     suspend  fun loginUser(
         email: String,
         password: String,
