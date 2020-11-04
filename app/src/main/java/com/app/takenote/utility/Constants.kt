@@ -23,9 +23,6 @@ const val FIELD_CANNOT_BE_EMPTY = "Field Cannot Be Empty"
 
 const val PASSWORD_DID_NOT_MATCH = "Password did not match"
 
-const val FULLNAME_SHOULD_CONTAIN_ATLEAST_EIGHT_CHARACTERS =
-    "Fullname should contain atleast 8 characters"
-
 const val COLLECTION_NAME = "users"
 
 const val SOMETHING_WENT_WRONG = "Something Went Wrong"
@@ -36,23 +33,15 @@ const val FULL_NAME = "fullname"
 
 const val EMAIL = "email"
 
-const val PASSWORD = "password"
-
 const val EMAIL_NOT_REGISTERED = "Email is not registered!!"
 
 const val INCORRECT_PASSWORD = "Incorrect Password"
-
-const val CURRENT_USER_ID = "user_id"
 
 const val BUNDLE = "bundle"
 
 const val IMAGE_URL = "image_url"
 
-const val TRY_AGAIN = "Try Again!!"
-
 const val UNABLE_TO_UPLOAD = "Unable to upload photo"
-
-const val UNABLE_TO_REGISTER_USER = "Unable to register user !!"
 
 const val PHOTO_UPLOADED_SUCCESSFULLY = "Photo uploaded successfully !!"
 
