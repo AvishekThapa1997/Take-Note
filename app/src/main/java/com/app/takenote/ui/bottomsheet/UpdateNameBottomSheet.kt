@@ -55,9 +55,7 @@ class UpdateNameBottomSheet : BottomSheetDialogFragment() {
                 progress.visibility = View.VISIBLE
                 hideViews()
                 if (currentUsername != updatedName) {
-                    profileViewModel.updateName(primaryId, updatedName) { errorMessage ->
-                        showMessage(errorMessage)
-                    }
+                    profileViewModel.updateName(primaryId, updatedName)
                 } else {
                     dismiss()
                 }
