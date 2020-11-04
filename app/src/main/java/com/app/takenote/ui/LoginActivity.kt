@@ -2,7 +2,6 @@ package com.app.takenote.ui
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import com.app.takenote.R
 import com.app.takenote.extensions.isEmptyOrIsBlank
@@ -10,7 +9,6 @@ import com.app.takenote.pojo.User
 import com.app.takenote.utility.*
 import com.app.takenote.viewmodels.AuthViewModel
 import com.app.takenote.viewmodels.LoginViewModel
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
