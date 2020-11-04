@@ -34,7 +34,7 @@ class AddProfileActivity : BaseActivity() {
         currentUser?.apply {
             if (!imageUri?.isEmptyOrIsBlank()!!) {
                 addPhotoIcon.hideView(View.GONE)
-                showImage(imageUri!!, userProfileImage)
+                showImage(imageUri, userProfileImage)
             } else {
                 addPhotoIcon.showView()
             }
@@ -81,6 +81,7 @@ class AddProfileActivity : BaseActivity() {
                     val updatedImageUri =
                         documentSnapshot[IMAGE_URL].toString()
                     if (currentUser?.imageUri != updatedImageUri) {
+                        currentUser = currentUser?.copy(imageUri = updatedImageUri)
                         showImage(updatedImageUri, userProfileImage, { successMessage ->
                             uploadProgress.hide()
                             showMessage(successMessage)
@@ -89,7 +90,7 @@ class AddProfileActivity : BaseActivity() {
                         })
                     }
                     if (currentUser?.fullName != updatedFullName) {
-                        currentUser?.fullName = updatedFullName
+                        currentUser = currentUser?.copy(fullName = updatedFullName)
                         startIntentFor(HomeActivity::class.java, currentUser)
                         finishAffinity()
                     }
