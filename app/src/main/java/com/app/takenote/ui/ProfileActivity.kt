@@ -32,10 +32,6 @@ class ProfileActivity : BaseActivity() {
         intent.getBundleExtra(BUNDLE)?.apply {
             currentUser = getParcelable(CURRENT_USER)
         }
-//        intent.getBundleExtra(BUNDLE)?.apply {
-//            if (containsKey(CURRENT_USER))
-//                currentUser = getParcelable(CURRENT_USER)
-//        }
         setProfile()
         editUsername.setOnClickListener {
             showUpdateNameBottomSheet()
@@ -43,8 +39,6 @@ class ProfileActivity : BaseActivity() {
         changeProfilePicture.setOnClickListener {
             chooseProfilePicture()
         }
-//        observeUpdatedUser()
-        //observeImageUploadProgress()
         currentUser?.let {
             observeRealUpdates(it.uid!!)
         }
@@ -70,16 +64,6 @@ class ProfileActivity : BaseActivity() {
         }
     }
 
-//    private fun observeImageUploadProgress() {
-//        profileViewModel.imageUploadIsInProgress.observe(this) { inProgress ->
-//            Log.i("TAG", "observeImageUploadProgress: $inProgress")
-//            if (inProgress) {
-//                if (!shimmerLayout.isShimmerVisible)
-//                    startShimmer()
-//            }
-//        }
-//    }
-
     private fun observeRealUpdates(userId: String) {
         firestore.collection(COLLECTION_NAME).document(userId)
             .addSnapshotListener { documentSnapshot: DocumentSnapshot?, fireStoreException: FirebaseFirestoreException? ->
@@ -87,7 +71,7 @@ class ProfileActivity : BaseActivity() {
                     val updatedName = documentSnapshot[FULL_NAME].toString()
                     val updatedImageUri = documentSnapshot[IMAGE_URL].toString()
                     if (currentUser?.imageUri != updatedImageUri) {
-                        currentUser?.imageUri = updatedImageUri
+                        currentUser = currentUser?.copy(imageUri = updatedImageUri)
                         applicationContext.showImage(
                             updatedImageUri,
                             userProfileImage,
@@ -104,7 +88,7 @@ class ProfileActivity : BaseActivity() {
                             })
                     }
                     if (updatedName != currentUser?.fullName) {
-                        currentUser?.fullName = updatedName
+                        currentUser = currentUser?.copy(fullName = updatedName)
                         userProfileName.text = currentUser?.fullName
                         if (currentUser?.imageUri.isEmptyOrIsBlank())
                             showNameInitialLetter()
@@ -127,18 +111,20 @@ class ProfileActivity : BaseActivity() {
     }
 
     private fun setProfile() {
-        if (!currentUser?.imageUri.isEmptyOrIsBlank())
-            applicationContext.showImage(currentUser?.imageUri!!, userProfileImage, null, {
+        if (!currentUser?.imageUri.isEmptyOrIsBlank()) {
+            startShimmer()
+            applicationContext.showImage(currentUser?.imageUri!!, userProfileImage, {
+                stopShimmer()
+            }, {
+                stopShimmer()
                 showNameInitialLetter()
             })
-        else
+        } else
             showNameInitialLetter()
         fullEmailAddress.text = currentUser?.email
         userProfileName.text = currentUser?.fullName
         changeProfilePicture.show()
-
     }
-
 
     private fun showUpdateNameBottomSheet() {
         if (sheetDialog == null)
@@ -150,41 +136,9 @@ class ProfileActivity : BaseActivity() {
         sheetDialog?.show(supportFragmentManager, "sheet")
     }
 
-//    private fun observeUpdatedUser() {
-//        profileViewModel.currentUser.observe(this) { response ->
-//            when (response) {
-//                is Success -> {
-//                    if (currentUser?.fullName != response.data.fullName) {
-//                        userProfileName.text = response.data.fullName
-//                        sheetDialog?.dismiss()
-//                        showMessage(SUCCESSFULLY_NAME_UPDATED)
-//                    } else
-//                        showImage(response.data.imageUri!!, userProfileImage, {
-//                            stopShimmer()
-//                            profileNameInitialLetter.hideView(View.INVISIBLE)
-//                            changeProfilePicture.show()
-//                        }, {
-//                            showHiddenViews()
-//                        })
-//                    currentUser = response.data
-//                }
-//                is Error -> {
-//                    showMessage(response.message)
-//                    stopShimmer()
-//                    showHiddenViews()
-//                }
-//            }
-//            userProfileImage.showView()
-//        }
-//    }
-
     private fun startShimmer() = shimmerLayout.showView()
 
     private fun stopShimmer() = shimmerLayout.hideView(View.GONE)
-
-//    private fun showHiddenViews() {
-//        changeProfilePicture.show()
-//    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
