@@ -2,7 +2,6 @@ package com.app.takenote.ui
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import com.app.takenote.R
@@ -13,7 +12,6 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.add_profile.*
 
 class HomeActivity : BaseActivity(), View.OnClickListener {
 //    companion object {
@@ -66,12 +64,12 @@ class HomeActivity : BaseActivity(), View.OnClickListener {
                     val updatedImageUri =
                         documentSnapshot[IMAGE_URL].toString()
                     if (currentUser?.imageUri != updatedImageUri) {
-                        currentUser?.imageUri = updatedImageUri
+                        currentUser = currentUser?.copy(imageUri = updatedImageUri)
                         startShimmer()
                         showProfileImage(currentUser!!)
                     }
                     if (currentUser?.fullName != updatedFullName) {
-                        currentUser?.fullName = updatedFullName
+                        currentUser = currentUser?.copy(fullName = updatedFullName)
                         if (currentUser?.imageUri.isEmptyOrIsBlank())
                             showProfileName(currentUser!!)
                     }
@@ -85,7 +83,7 @@ class HomeActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun showProfileImage(currentUser: User) {
-        if(profile.isVisible)
+        if (profile.isVisible)
             profile.hideView(View.INVISIBLE)
         showImage(currentUser.imageUri!!, profileImage, {
             if (shimmerLayout.isShimmerVisible)
@@ -114,19 +112,7 @@ class HomeActivity : BaseActivity(), View.OnClickListener {
     }
 
     override fun enabledFullScreen(): Boolean = false
-    override fun onClick(v: View?) {
-//        when (v?.id) {
-//            R.id.userProfileImage -> {
-//                val options = createSceneTransition(profileImage, PROFILE_IMAGE_TRANSITION)
-//                startIntentFor(ProfileActivity::class.java, currentUser, options.toBundle())
-//                //startIntentFor(ProfileActivity::class.java,currentUser)
-//            }
-//            else -> {
-//                val options = createSceneTransition(profile, PROFILE_NAME_TRANSITION)
-//                startIntentFor(ProfileActivity::class.java, currentUser, options.toBundle())
-//            }
-//        }
+    override fun onClick(v: View?) =
         startIntentFor(ProfileActivity::class.java, currentUser)
-    }
 
 }
