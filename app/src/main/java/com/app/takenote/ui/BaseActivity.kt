@@ -8,9 +8,7 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import com.app.takenote.pojo.User
-import com.app.takenote.utility.BUNDLE
-import com.app.takenote.utility.CURRENT_USER
-import com.app.takenote.utility.showMessage
+import com.app.takenote.utility.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
