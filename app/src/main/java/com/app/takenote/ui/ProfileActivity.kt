@@ -22,12 +22,6 @@ class ProfileActivity : BaseActivity() {
     private val profileViewModel: ProfileViewModel by viewModel()
     private var sheetDialog: UpdateNameBottomSheet? = null
     override fun onCreate(savedInstanceState: Bundle?) {
-//        window.sharedElementEnterTransition = TransitionInflater.from(applicationContext)
-//            .inflateTransition(R.transition.shared_transition)
-//        window.sharedElementExitTransition = TransitionInflater.from(applicationContext)
-//            .inflateTransition(R.transition.shared_transition)
-//        window.allowReturnTransitionOverlap = false
-//        window.allowEnterTransitionOverlap = false
         super.onCreate(savedInstanceState)
         intent.getBundleExtra(BUNDLE)?.apply {
             currentUser = getParcelable(CURRENT_USER)
@@ -39,10 +33,21 @@ class ProfileActivity : BaseActivity() {
         changeProfilePicture.setOnClickListener {
             chooseProfilePicture()
         }
+        btnLogout.setOnClickListener {
+            logoutUser()
+        }
         currentUser?.let {
             observeRealUpdates(it.uid!!)
         }
         observeError()
+        observeToLogout()
+    }
+
+    private fun observeToLogout() {
+        profileViewModel.logout.observe(this) {
+            startIntentFor(LoginActivity::class.java)
+            finishAffinity()
+        }
     }
 
     private fun observeError() {
@@ -65,7 +70,7 @@ class ProfileActivity : BaseActivity() {
     }
 
     private fun observeRealUpdates(userId: String) {
-        firestore.collection(COLLECTION_NAME).document(userId)
+        fireStore.collection(COLLECTION_NAME).document(userId)
             .addSnapshotListener { documentSnapshot: DocumentSnapshot?, fireStoreException: FirebaseFirestoreException? ->
                 if (documentSnapshot != null && documentSnapshot.data != null) {
                     val updatedName = documentSnapshot[FULL_NAME].toString()
@@ -158,6 +163,10 @@ class ProfileActivity : BaseActivity() {
             }
         } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE)
             showMessage(UNABLE_TO_UPLOAD)
+    }
+
+    private fun logoutUser() {
+        profileViewModel.logoutUser()
     }
 }
 
