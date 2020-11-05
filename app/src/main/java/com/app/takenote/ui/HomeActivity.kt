@@ -9,28 +9,15 @@ import com.app.takenote.extensions.isEmptyOrIsBlank
 import com.app.takenote.pojo.User
 import com.app.takenote.utility.*
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.android.synthetic.main.activity_home.*
 
 class HomeActivity : BaseActivity(), View.OnClickListener {
-//    companion object {
-//        const val PROFILE_IMAGE_TRANSITION = "profileImage"
-//        const val PROFILE_NAME_TRANSITION = "profileName"
-//    }
 
     override val layoutResourceId: Int = R.layout.activity_home
     private var currentUser: User? = null
     private lateinit var realTimeListener: ListenerRegistration
     override fun onCreate(savedInstanceState: Bundle?) {
-//        window.sharedElementExitTransition = TransitionInflater.from(applicationContext)
-//            .inflateTransition(R.transition.shared_transition)
-//        window.sharedElementReturnTransition = TransitionInflater.from(applicationContext)
-//            .inflateTransition(R.transition.shared_transition)
-//        window.sharedElementReenterTransition = false
-//        window.allowEnterTransitionOverlap = false
-//        window.allowReturnTransitionOverlap = false
-//        window.allowEnterTransitionOverlap = false
         super.onCreate(savedInstanceState)
         searchNote.setOnFocusChangeListener { _, hasFocus ->
             searchNote.isCursorVisible = hasFocus
@@ -49,15 +36,14 @@ class HomeActivity : BaseActivity(), View.OnClickListener {
                 }
             }
         }
-
         profileImage.setOnClickListener(this)
         profile.setOnClickListener(this)
     }
 
     override fun onResume() {
         super.onResume()
-        realTimeListener = firestore.collection(COLLECTION_NAME).document(currentUser?.uid!!)
-            .addSnapshotListener { documentSnapshot: DocumentSnapshot?, error: FirebaseFirestoreException? ->
+        realTimeListener = fireStore.collection(COLLECTION_NAME).document(currentUser?.uid!!)
+            .addSnapshotListener { documentSnapshot: DocumentSnapshot?, _ ->
                 if (documentSnapshot != null && documentSnapshot.data != null) {
                     val updatedFullName =
                         documentSnapshot[FULL_NAME].toString()

@@ -73,7 +73,7 @@ class AddProfileActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        realTimeListener = firestore.collection(COLLECTION_NAME).document(currentUser?.uid!!)
+        realTimeListener = fireStore.collection(COLLECTION_NAME).document(currentUser?.uid!!)
             .addSnapshotListener { documentSnapshot: DocumentSnapshot?, error: FirebaseFirestoreException? ->
                 if (documentSnapshot != null && documentSnapshot.data != null) {
                     val updatedFullName =

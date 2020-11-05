@@ -80,7 +80,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
 
     private fun observeRealTimeUpdates(userId: String?) {
         observing = true
-        listener = firestore.collection(COLLECTION_NAME).document(userId!!)
+        listener = fireStore.collection(COLLECTION_NAME).document(userId!!)
             .addSnapshotListener { documentSnapshot: DocumentSnapshot?, error: FirebaseFirestoreException? ->
                 if (documentSnapshot != null && documentSnapshot.data != null) {
                     val currentUser = User(

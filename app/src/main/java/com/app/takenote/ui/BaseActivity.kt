@@ -17,7 +17,7 @@ import org.koin.android.ext.android.get
 abstract class BaseActivity : AppCompatActivity() {
     open val layoutResourceId = 0
     open fun enabledFullScreen(): Boolean = true
-    protected val firestore: FirebaseFirestore = get()
+    protected val fireStore: FirebaseFirestore = get()
     protected var observing = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

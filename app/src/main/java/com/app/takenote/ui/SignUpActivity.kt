@@ -66,7 +66,7 @@ class SignUpActivity : BaseActivity() {
     }
 
     private fun observeRealTimeUpdates(userId: String?) {
-        listener = firestore.collection(COLLECTION_NAME).document(userId!!)
+        listener = fireStore.collection(COLLECTION_NAME).document(userId!!)
             .addSnapshotListener { documentSnapshot: DocumentSnapshot?, error: FirebaseFirestoreException? ->
                 if (documentSnapshot != null && documentSnapshot.data != null) {
                     val currentUser = User(
