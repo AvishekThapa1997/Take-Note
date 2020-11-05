@@ -4,10 +4,7 @@ package com.app.takenote.di
 import com.app.takenote.repositoryimpl.AuthRepositoryImpl
 import com.app.takenote.repositoryimpl.DataRepositoryImpl
 import com.app.takenote.repositoryimpl.ProfileRepositoryImpl
-import com.app.takenote.viewmodels.AddProfileViewModel
-import com.app.takenote.viewmodels.LoginViewModel
-import com.app.takenote.viewmodels.ProfileViewModel
-import com.app.takenote.viewmodels.SignUpViewModel
+import com.app.takenote.viewmodels.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -18,9 +15,10 @@ import org.koin.dsl.module
 
 val viewModelModules = module {
     viewModel { LoginViewModel(get<AuthRepositoryImpl>()) }
-    viewModel { SignUpViewModel(get<AuthRepositoryImpl>(),get<DataRepositoryImpl>()) }
+    viewModel { SignUpViewModel(get<AuthRepositoryImpl>(), get<DataRepositoryImpl>()) }
     viewModel { AddProfileViewModel(get<ProfileRepositoryImpl>(), get<DataRepositoryImpl>()) }
     viewModel { ProfileViewModel(get<ProfileRepositoryImpl>(), get<DataRepositoryImpl>()) }
+    viewModel { SplashViewModel(get<DataRepositoryImpl>()) }
 }
 val firebaseModules = module {
     factory { Firebase.auth }
