@@ -3,6 +3,7 @@
     package="com.app.takenote">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".di.TakeNoteApplication"
         android:allowBackup="true"
@@ -12,6 +13,7 @@
         android:roundIcon="@mipmap/app_icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ui.NoteTakeActivity" />
         <activity android:name=".ui.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
