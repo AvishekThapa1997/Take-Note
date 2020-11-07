@@ -9,6 +9,9 @@ interface CustomTypeWriterListener : TypeWriterListener {
     override fun onTypingRemoved(text: String?) {
 
     }
+    override fun onTypingEnd(text: String?) {
+
+    }
 
     override fun onTypingStart(text: String?) {
 
