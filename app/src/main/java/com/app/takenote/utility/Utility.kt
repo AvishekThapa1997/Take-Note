@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.IBinder
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
@@ -15,7 +14,6 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.snackbar.Snackbar
-import com.tozny.crypto.android.AesCbcWithIntegrity
 
 fun View.showMessage(message: String) {
     Snackbar.make(this, message, Snackbar.LENGTH_LONG).show()
@@ -70,6 +68,13 @@ fun Activity.hideKeyboard(token: IBinder? = null) {
             0
         )
     }
+}
+
+fun View.openKeyboard(isKeyboardOpen: ((Boolean) -> Unit)? = null) {
+    val inputMethodManager: InputMethodManager =
+        context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+    isKeyboardOpen?.invoke(true)
 }
 
 //fun Activity.openKeyboard() {
