@@ -24,4 +24,7 @@
     <string name="save">save</string>
     <string name="cancel">Cancel</string>
     <string name="logout">logout</string>
+    <string name="title">Title</string>
+    <string name="note">Note</string>
+    <string name="add_note">Add Note</string>
 </resources>
