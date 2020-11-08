@@ -2,6 +2,7 @@ package com.app.takenote.ui
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.app.takenote.R
 import com.app.takenote.extensions.isEmptyOrIsBlank
@@ -16,8 +17,7 @@ import kotlinx.android.synthetic.main.activity_login.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class LoginActivity : BaseActivity(), View.OnClickListener {
-    override val layoutResourceId: Int
-        get() = R.layout.activity_login
+    override val layoutResourceId = R.layout.activity_login
     private val authViewModel: AuthViewModel by viewModel<LoginViewModel>()
     private var listener: ListenerRegistration? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,8 +88,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
                         documentSnapshot[EMAIL].toString(),
                         documentSnapshot[IMAGE_URL].toString(),
                         documentSnapshot[PRIMARY_ID].toString(),
-
-                        )
+                    )
                     if (currentUser.fullName.isEmptyOrIsBlank()) {
                         startIntentFor(
                             AddProfileActivity::class.java,
