@@ -50,3 +50,15 @@ const val CURRENT_USER_NAME = "fullname"
 const val PRIMARY_ID = "primaryId"
 
 const val CURRENT_USER = "current_user"
+
+const val NOTE_COLLECTION = "note"
+
+const val NOTE_ID = "id"
+
+const val NOTE_TITLE = "title"
+
+const val NOTE_BODY = "body"
+
+const val AUTHOR_ID = "authorId"
+
+const val CURRENT_NOTE = "current_note"
