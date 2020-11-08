@@ -1,30 +1,37 @@
 package com.app.takenote.ui
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import com.app.takenote.R
+import com.app.takenote.adapter.NoteAdapter
 import com.app.takenote.extensions.isEmptyOrIsBlank
+import com.app.takenote.helper.ClickListener
+import com.app.takenote.pojo.Note
 import com.app.takenote.pojo.User
 import com.app.takenote.utility.*
+import com.app.takenote.viewholder.NoteViewHolder
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.android.synthetic.main.activity_home.*
+import java.lang.ref.WeakReference
 
-class HomeActivity : BaseActivity(), View.OnClickListener {
+class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
 
     override val layoutResourceId: Int = R.layout.activity_home
     private var currentUser: User? = null
     private lateinit var realTimeListener: ListenerRegistration
+    private lateinit var fireStoreAdapter: FirestoreRecyclerAdapter<Note, NoteViewHolder>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        searchNote.setOnFocusChangeListener { _, hasFocus ->
-            searchNote.isCursorVisible = hasFocus
-        }
         val intent = intent
         val bundle = intent.getBundleExtra(BUNDLE)
         currentUser = bundle?.getParcelable(CURRENT_USER)
+        setUpRecyclerView()
         currentUser?.let {
             if (!it.imageUri.isEmptyOrIsBlank()) {
                 startShimmer()
@@ -38,6 +45,9 @@ class HomeActivity : BaseActivity(), View.OnClickListener {
         }
         profileImage.setOnClickListener(this)
         profile.setOnClickListener(this)
+        addNote.setOnClickListener {
+            startIntentFor(NoteUploadActivity::class.java, currentUser)
+        }
     }
 
     override fun onResume() {
@@ -97,8 +107,24 @@ class HomeActivity : BaseActivity(), View.OnClickListener {
         profile.showView()
     }
 
+    private fun setUpRecyclerView() {
+        val query = fireStore.collection(NOTE_COLLECTION).whereEqualTo(AUTHOR_ID, currentUser?.uid)
+        val recyclerOptions =
+            FirestoreRecyclerOptions.Builder<Note>().setQuery(query, Note::class.java)
+                .setLifecycleOwner(this).build()
+        fireStoreAdapter = NoteAdapter(recyclerOptions, WeakReference(this))
+        noteList.setHasFixedSize(true)
+        noteList.adapter = fireStoreAdapter
+    }
+
     override fun enabledFullScreen(): Boolean = false
     override fun onClick(v: View?) =
         startIntentFor(ProfileActivity::class.java, currentUser)
+
+    override fun onClick(note: Note) {
+        val intent = Intent(applicationContext, NoteUploadActivity::class.java)
+        intent.putExtra(CURRENT_NOTE, note)
+        startActivity(intent)
+    }
 
 }
