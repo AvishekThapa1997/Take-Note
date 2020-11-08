@@ -66,14 +66,14 @@ class UpdateNameBottomSheet : BottomSheetDialogFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         updatedName.requestFocus()
-        openKeyboard()
+        updatedName.openKeyboard()
     }
 
-    private fun openKeyboard() {
-        val inputMethodManager: InputMethodManager =
-            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.showSoftInput(updatedName, InputMethodManager.SHOW_IMPLICIT)
-    }
+//    private fun openKeyboard() {
+//        val inputMethodManager: InputMethodManager =
+//            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//        inputMethodManager.showSoftInput(updatedName, InputMethodManager.SHOW_IMPLICIT)
+//    }
 
 
     private fun hideViews() {
