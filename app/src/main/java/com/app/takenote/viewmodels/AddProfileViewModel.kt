@@ -24,7 +24,7 @@ class AddProfileViewModel(
 
     fun uploadPhoto(imagePath: String, uid: String) {
         profileRepository.uploadImage(uid, imagePath, { imageUrl ->
-            dataRepository.updateData(
+            dataRepository.updateUserData(
                 uid,
                 mutableMapOf(IMAGE_URL to imageUrl)
             ) { updateError ->
@@ -37,7 +37,7 @@ class AddProfileViewModel(
 
     fun setName(primaryId: String, name: String) {
         if (!name.isEmptyOrIsBlank()) {
-            dataRepository.updateData(
+            dataRepository.updateUserData(
                 primaryId,
                 mutableMapOf(FULL_NAME to name)
             ) { updateError ->

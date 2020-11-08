@@ -21,7 +21,7 @@ class ProfileViewModel(
 
     fun updateProfilePhoto(primaryId: String, imageUrl: String) {
         profileRepository.uploadImage(primaryId, imageUrl, { updatedImageUrl ->
-            dataRepository.updateData(
+            dataRepository.updateUserData(
                 primaryId,
                 mutableMapOf(IMAGE_URL to updatedImageUrl)
             ) { updatedError ->
@@ -33,7 +33,7 @@ class ProfileViewModel(
     }
 
     fun updateName(primaryId: String, updatedName: String) {
-        dataRepository.updateData(
+        dataRepository.updateUserData(
             primaryId,
             mutableMapOf(FULL_NAME to updatedName)
         ) { errorMessage ->
