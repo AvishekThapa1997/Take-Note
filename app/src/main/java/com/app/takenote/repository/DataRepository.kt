@@ -1,5 +1,6 @@
 package com.app.takenote.repository
 
+import com.app.takenote.pojo.Note
 import com.app.takenote.pojo.User
 import com.google.firebase.firestore.Source
 
@@ -17,9 +18,13 @@ interface DataRepository {
         source: Source? = null
     )
 
-    fun updateData(
+    fun updateUserData(
         primaryId: String,
         updatedData: Map<String, String>,
         onError: ((String) -> Unit)
     )
+
+    fun storeNote(note: Note, onError: (String) -> Unit)
+
+    fun updateNote(note : Note,onError: (String) -> Unit)
 }
