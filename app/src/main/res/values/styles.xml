@@ -39,7 +39,9 @@
         <item name="cornerSizeBottomLeft">0dp</item>
         <item name="colorAccent">@color/lightBlue</item>
     </style>
-
+    <style name="ToolbarStyle" parent="AppTheme">
+        <item name="android:fontFamily">@font/regular</item>
+    </style>
     <!--    <style name="AnimationTheme" parent="AppTheme">-->
     <!--        <item name="android:windowSharedElementEnterTransition">-->
     <!--            @transition/shared_transition-->
