@@ -8,6 +8,7 @@ import com.app.takenote.extensions.isEmptyOrIsBlank
 import com.app.takenote.extensions.runIO
 import com.app.takenote.pojo.Note
 import com.app.takenote.repository.DataRepository
+import java.util.*
 
 
 class NoteUploadViewModel(private val dataRepository: DataRepository) : ViewModel() {
@@ -20,7 +21,7 @@ class NoteUploadViewModel(private val dataRepository: DataRepository) : ViewMode
             if (noteTitle.isEmptyOrIsBlank() || noteBody.isEmptyOrIsBlank())
                 _errorMessage.value = "Note Discarded"
             else {
-                val note = Note(id = "", noteTitle, noteBody, userId)
+                val note = Note(id = "", noteTitle, noteBody, userId, Date().time.toString())
                 dataRepository.storeNote(note) { errorMessage ->
                     _errorMessage.value = errorMessage
                 }

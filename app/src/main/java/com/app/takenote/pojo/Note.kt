@@ -2,19 +2,18 @@ package com.app.takenote.pojo
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.app.takenote.utility.AUTHOR_ID
-import com.app.takenote.utility.NOTE_BODY
-import com.app.takenote.utility.NOTE_ID
-import com.app.takenote.utility.NOTE_TITLE
+import com.app.takenote.utility.*
 
 data class Note(
     val id: String,
     val title: String,
     val body: String,
     val authorId: String,
+    val generatedDate: String
 ) : Parcelable {
-    constructor() : this("", "", "", "")
+    constructor() : this("", "", "", "", "")
     constructor(source: Parcel) : this(
+        source.readString()!!,
         source.readString()!!,
         source.readString()!!,
         source.readString()!!,
@@ -28,6 +27,7 @@ data class Note(
         writeString(title)
         writeString(body)
         writeString(authorId)
+        writeString(generatedDate)
     }
 
     companion object {
@@ -43,7 +43,8 @@ data class Note(
             NOTE_ID to id,
             NOTE_TITLE to title,
             NOTE_BODY to body,
-            AUTHOR_ID to authorId
+            AUTHOR_ID to authorId,
+            GENERATED_DATE to generatedDate
         )
     }
 }
