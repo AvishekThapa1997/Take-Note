@@ -62,3 +62,5 @@ const val NOTE_BODY = "body"
 const val AUTHOR_ID = "authorId"
 
 const val CURRENT_NOTE = "current_note"
+
+const val GENERATED_DATE ="generatedDate"
