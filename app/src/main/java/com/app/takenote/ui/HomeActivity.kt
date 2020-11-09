@@ -3,7 +3,9 @@ package com.app.takenote.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
 import android.view.View
+import android.widget.TextView
 import androidx.core.view.isVisible
 import com.app.takenote.R
 import com.app.takenote.adapter.NoteAdapter
@@ -13,11 +15,15 @@ import com.app.takenote.pojo.Note
 import com.app.takenote.pojo.User
 import com.app.takenote.utility.*
 import com.app.takenote.viewholder.NoteViewHolder
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.Query
+import com.mikhaellopez.circularimageview.CircularImageView
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.toolbar_layout.view.*
 import java.lang.ref.WeakReference
 
 class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
@@ -26,12 +32,31 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
     private var currentUser: User? = null
     private lateinit var realTimeListener: ListenerRegistration
     private lateinit var fireStoreAdapter: FirestoreRecyclerAdapter<Note, NoteViewHolder>
+   // private lateinit var profileView: View
+    private lateinit var profile: TextView
+    private lateinit var profileImage: CircularImageView
+    private lateinit var shimmerLayout: ShimmerFrameLayout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val intent = intent
         val bundle = intent.getBundleExtra(BUNDLE)
         currentUser = bundle?.getParcelable(CURRENT_USER)
+        setSupportActionBar(toolbar)
         setUpRecyclerView()
+//        profileImage.setOnClickListener(this)
+//        profileView..setOnClickListener(this)
+        addNote.setOnClickListener {
+            startIntentFor(NoteUploadActivity::class.java, currentUser)
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.appbar_menu, menu)
+        val view = menu?.getItem(0)?.actionView!!
+        view.setOnClickListener {
+            startIntentFor(ProfileActivity::class.java, currentUser)
+        }
+        initViews(view)
         currentUser?.let {
             if (!it.imageUri.isEmptyOrIsBlank()) {
                 startShimmer()
@@ -43,11 +68,7 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
                 }
             }
         }
-        profileImage.setOnClickListener(this)
-        profile.setOnClickListener(this)
-        addNote.setOnClickListener {
-            startIntentFor(NoteUploadActivity::class.java, currentUser)
-        }
+        return true
     }
 
     override fun onResume() {
@@ -81,7 +102,7 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
     private fun showProfileImage(currentUser: User) {
         if (profile.isVisible)
             profile.hideView(View.INVISIBLE)
-        showImage(currentUser.imageUri!!, profileImage, {
+        showImage(currentUser.imageUri!!,profileImage, {
             if (shimmerLayout.isShimmerVisible)
                 stopShimmer()
         }, {
@@ -108,13 +129,22 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
     }
 
     private fun setUpRecyclerView() {
-        val query = fireStore.collection(NOTE_COLLECTION).whereEqualTo(AUTHOR_ID, currentUser?.uid)
+        val query =
+            fireStore.collection(NOTE_COLLECTION).whereEqualTo(AUTHOR_ID, currentUser?.uid).orderBy(
+                GENERATED_DATE, Query.Direction.DESCENDING
+            )
         val recyclerOptions =
             FirestoreRecyclerOptions.Builder<Note>().setQuery(query, Note::class.java)
                 .setLifecycleOwner(this).build()
         fireStoreAdapter = NoteAdapter(recyclerOptions, WeakReference(this))
         noteList.setHasFixedSize(true)
         noteList.adapter = fireStoreAdapter
+    }
+
+    private fun initViews(view: View) {
+        profile = view.profile
+        profileImage = view.profileImage
+        shimmerLayout = view.shimmerLayout
     }
 
     override fun enabledFullScreen(): Boolean = false
