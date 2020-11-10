@@ -12,6 +12,7 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.DialogFragment
 import com.app.takenote.R
+import com.app.takenote.extensions.isEmptyOrIsBlank
 import com.app.takenote.utility.*
 import com.app.takenote.viewmodels.ProfileViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -54,7 +55,7 @@ class UpdateNameBottomSheet : BottomSheetDialogFragment() {
                 val updatedName = updatedName.text.toString()
                 progress.visibility = View.VISIBLE
                 hideViews()
-                if (currentUsername != updatedName) {
+                if (currentUsername != updatedName && !updatedName.isEmptyOrIsBlank()) {
                     profileViewModel.updateName(primaryId, updatedName)
                 } else {
                     dismiss()
