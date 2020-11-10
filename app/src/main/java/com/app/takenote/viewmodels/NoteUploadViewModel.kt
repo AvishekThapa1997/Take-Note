@@ -12,33 +12,44 @@ import java.util.*
 
 
 class NoteUploadViewModel(private val dataRepository: DataRepository) : ViewModel() {
-    private val _errorMessage: MutableLiveData<String> = MutableLiveData()
-    val errorMessage: LiveData<String>
-        get() = _errorMessage
+    private val _message: MutableLiveData<String> = MutableLiveData()
+    val message: LiveData<String>
+        get() = _message
 
     fun uploadNote(noteTitle: String, noteBody: String, userId: String) {
         runIO {
+            var isSuccess = true
             if (noteTitle.isEmptyOrIsBlank() || noteBody.isEmptyOrIsBlank())
-                _errorMessage.value = "Note Discarded"
+                _message.value = "Note Discarded"
             else {
                 val note = Note(id = "", noteTitle, noteBody, userId, Date().time.toString())
                 dataRepository.storeNote(note) { errorMessage ->
-                    _errorMessage.value = errorMessage
+                    _message.value = errorMessage
+                    isSuccess = false
                 }
+                setSuccess(isSuccess)
             }
         }
     }
 
     fun updateNote(noteTitle: String, noteBody: String, note: Note) {
         runIO {
+            var isSuccess = true
             if (noteTitle.isEmptyOrIsBlank() || noteBody.isEmptyOrIsBlank())
-                _errorMessage.value = "Note Discarded"
+                _message.value = "Note Discarded"
             else {
                 val updatedNote = note.copy(title = noteTitle, body = noteBody)
                 dataRepository.updateNote(updatedNote) { errorMessage ->
-                    _errorMessage.value = errorMessage
+                    _message.value = errorMessage
+                    isSuccess = false
                 }
+                setSuccess(isSuccess)
             }
         }
+    }
+
+    private fun setSuccess(success: Boolean) {
+        if (success)
+            _message.value = "success"
     }
 }

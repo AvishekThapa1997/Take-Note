@@ -1,9 +1,9 @@
 package com.app.takenote.ui
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
-import android.util.Log
 import com.app.takenote.R
 import com.app.takenote.pojo.Note
 import com.app.takenote.pojo.User
@@ -42,8 +42,13 @@ class NoteUploadActivity : BaseActivity() {
     }
 
     private fun observeErrorMessage() {
-        noteUploadViewModel.errorMessage.observe(this) { errorMessage ->
-            showMessage(errorMessage)
+        noteUploadViewModel.message.observe(this) { message ->
+            if (message == NOTE_DISCARDED) {
+                val intent = Intent()
+                intent.putExtra(MESSAGE, message)
+                setResult(RESULT_CODE, intent)
+            }
+            finish()
         }
     }
 
@@ -101,7 +106,8 @@ class NoteUploadActivity : BaseActivity() {
                 inputs[NOTE_BODY].toString(),
                 currentNote
             )
-        finish()
+        else
+            finish()
     }
 
     private fun convertStringToEditable(data: String) =
