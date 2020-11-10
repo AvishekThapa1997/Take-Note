@@ -32,7 +32,8 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
     private var currentUser: User? = null
     private lateinit var realTimeListener: ListenerRegistration
     private lateinit var fireStoreAdapter: FirestoreRecyclerAdapter<Note, NoteViewHolder>
-   // private lateinit var profileView: View
+
+    // private lateinit var profileView: View
     private lateinit var profile: TextView
     private lateinit var profileImage: CircularImageView
     private lateinit var shimmerLayout: ShimmerFrameLayout
@@ -46,7 +47,7 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
 //        profileImage.setOnClickListener(this)
 //        profileView..setOnClickListener(this)
         addNote.setOnClickListener {
-            startIntentFor(NoteUploadActivity::class.java, currentUser)
+            toNoteUploadActivity()
         }
     }
 
@@ -102,7 +103,7 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
     private fun showProfileImage(currentUser: User) {
         if (profile.isVisible)
             profile.hideView(View.INVISIBLE)
-        showImage(currentUser.imageUri!!,profileImage, {
+        showImage(currentUser.imageUri!!, profileImage, {
             if (shimmerLayout.isShimmerVisible)
                 stopShimmer()
         }, {
@@ -130,12 +131,13 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
 
     private fun setUpRecyclerView() {
         val query =
-            fireStore.collection(NOTE_COLLECTION).whereEqualTo(AUTHOR_ID, currentUser?.uid).orderBy(
-                GENERATED_DATE, Query.Direction.DESCENDING
-            )
+            fireStore.collection(NOTE_COLLECTION)
+                .orderBy(GENERATED_DATE, Query.Direction.DESCENDING)
+                .whereEqualTo(AUTHOR_ID, currentUser?.uid)
         val recyclerOptions =
             FirestoreRecyclerOptions.Builder<Note>().setQuery(query, Note::class.java)
-                .setLifecycleOwner(this).build()
+                .setLifecycleOwner(this)
+                .build()
         fireStoreAdapter = NoteAdapter(recyclerOptions, WeakReference(this))
         noteList.setHasFixedSize(true)
         noteList.adapter = fireStoreAdapter
@@ -145,6 +147,15 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
         profile = view.profile
         profileImage = view.profileImage
         shimmerLayout = view.shimmerLayout
+    }
+
+    private fun toNoteUploadActivity() {
+        val intent = Intent(applicationContext, NoteUploadActivity::class.java)
+        val bundle = Bundle()
+        bundle.putParcelable(CURRENT_USER, currentUser)
+        intent.putExtra(BUNDLE, bundle)
+        startActivityForResult(intent, REQUEST_CODE)
+
     }
 
     override fun enabledFullScreen(): Boolean = false
@@ -157,4 +168,10 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
         startActivity(intent)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_CODE && data != null) {
+            showMessage(data.getStringExtra(MESSAGE)!!)
+        }
+    }
 }
