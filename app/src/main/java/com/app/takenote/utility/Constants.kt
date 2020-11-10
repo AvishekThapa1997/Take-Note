@@ -64,3 +64,11 @@ const val AUTHOR_ID = "authorId"
 const val CURRENT_NOTE = "current_note"
 
 const val GENERATED_DATE ="generatedDate"
+
+const val NOTE_DISCARDED = "Note Discarded"
+
+const val MESSAGE ="message"
+
+const val RESULT_CODE = 1
+
+const val REQUEST_CODE = 0
