@@ -22,11 +22,11 @@ val viewModelModules = module {
     viewModel { NoteUploadViewModel(get<DataRepositoryImpl>()) }
 }
 val firebaseModules = module {
-    factory { Firebase.auth }
-    factory {
+    single { Firebase.auth }
+    single {
         Firebase.firestore
     }
-    factory {
+    single {
         val storage: FirebaseStorage = Firebase.storage
         storage.maxDownloadRetryTimeMillis = 5000
         storage.maxOperationRetryTimeMillis = 5000
@@ -37,7 +37,7 @@ val firebaseModules = module {
 
 val repositoryModules = module {
     single {
-        AuthRepositoryImpl(get())
+        AuthRepositoryImpl(get(),get())
     }
     single {
         DataRepositoryImpl(get())

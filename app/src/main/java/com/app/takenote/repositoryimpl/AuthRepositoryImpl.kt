@@ -7,10 +7,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class AuthRepositoryImpl(
     private val firebaseAuth: FirebaseAuth,
+    private val fireStore : FirebaseFirestore
 ) : AuthRepository {
     override suspend fun loginUser(
         email: String,
@@ -59,5 +61,6 @@ class AuthRepositoryImpl(
 
     override fun logoutUser() {
         firebaseAuth.signOut()
+        fireStore.clearPersistence()
     }
 }
