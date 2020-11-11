@@ -1,6 +1,6 @@
 package com.app.takenote.ui.bottomsheet
 
-import android.content.Context
+
 import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Bundle
@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.DialogFragment
 import com.app.takenote.R
 import com.app.takenote.extensions.isEmptyOrIsBlank
