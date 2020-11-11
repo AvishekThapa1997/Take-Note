@@ -132,8 +132,7 @@ class ProfileActivity : BaseActivity() {
     }
 
     private fun showUpdateNameBottomSheet() {
-        if (sheetDialog == null)
-            sheetDialog = UpdateNameBottomSheet()
+        sheetDialog = UpdateNameBottomSheet()
         sheetDialog?.arguments = Bundle().apply {
             putString(CURRENT_USER_NAME, currentUser?.fullName)
             putString(PRIMARY_ID, currentUser?.uid)
