@@ -127,6 +127,7 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
     private fun showProfileName(currentUser: User) {
         profile.text = currentUser.fullName!![0].toString()
         profile.showView()
+        stopShimmer()
     }
 
     private fun setUpRecyclerView() {
