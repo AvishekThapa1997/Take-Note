@@ -42,14 +42,4 @@
     <style name="ToolbarStyle" parent="AppTheme">
         <item name="android:fontFamily">@font/regular</item>
     </style>
-    <!--    <style name="AnimationTheme" parent="AppTheme">-->
-    <!--        <item name="android:windowSharedElementEnterTransition">-->
-    <!--            @transition/shared_transition-->
-    <!--        </item>-->
-    <!--        <item name="android:windowSharedElementExitTransition">-->
-    <!--            @transition/shared_transition-->
-    <!--        </item>-->
-    <!--        <item name="android:windowEnterTransition">@transition/shared_transition</item>-->
-    <!--        <item name="android:windowExitTransition">@transition/shared_transition</item>-->
-    <!--    </style>-->
 </resources>
