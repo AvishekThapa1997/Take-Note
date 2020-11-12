@@ -13,8 +13,8 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.activity_profile.*
-import kotlinx.android.synthetic.main.activity_profile.userProfileImage
 import org.koin.android.viewmodel.ext.android.viewModel
+
 
 class ProfileActivity : BaseActivity() {
     override val layoutResourceId = R.layout.activity_profile
