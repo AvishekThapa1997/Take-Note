@@ -4,4 +4,5 @@ import com.app.takenote.pojo.Note
 
 interface ClickListener {
     fun onClick(note : Note)
+    fun deleteNote(position : Int)
 }
