@@ -13,5 +13,6 @@
          <tr>
              <td><img src="app/screenshots/7.jpg"></td>
              <td><img src="app/screenshots/8.jpg"></td>
+             <td><img src="app/screenshots/9.jpg"></td>
          </tr>
 </table>
