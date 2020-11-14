@@ -7,14 +7,17 @@ import android.view.Menu
 import android.view.View
 import android.widget.TextView
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.app.takenote.R
 import com.app.takenote.adapter.NoteAdapter
 import com.app.takenote.extensions.isEmptyOrIsBlank
 import com.app.takenote.helper.ClickListener
+import com.app.takenote.helper.RecyclerViewSwipeCallBack
 import com.app.takenote.pojo.Note
 import com.app.takenote.pojo.User
 import com.app.takenote.utility.*
 import com.app.takenote.viewholder.NoteViewHolder
+import com.app.takenote.viewmodels.HomeViewModel
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -24,6 +27,7 @@ import com.google.firebase.firestore.Query
 import com.mikhaellopez.circularimageview.CircularImageView
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.toolbar_layout.view.*
+import org.koin.android.viewmodel.ext.android.viewModel
 import java.lang.ref.WeakReference
 
 class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
@@ -32,11 +36,11 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
     private var currentUser: User? = null
     private lateinit var realTimeListener: ListenerRegistration
     private lateinit var fireStoreAdapter: FirestoreRecyclerAdapter<Note, NoteViewHolder>
-
-    // private lateinit var profileView: View
     private lateinit var profile: TextView
     private lateinit var profileImage: CircularImageView
     private lateinit var shimmerLayout: ShimmerFrameLayout
+    private lateinit var itemTouchHelper: ItemTouchHelper
+    private val homeViewModel: HomeViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val intent = intent
@@ -44,8 +48,6 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
         currentUser = bundle?.getParcelable(CURRENT_USER)
         setSupportActionBar(toolbar)
         setUpRecyclerView()
-//        profileImage.setOnClickListener(this)
-//        profileView..setOnClickListener(this)
         addNote.setOnClickListener {
             toNoteUploadActivity()
         }
@@ -131,6 +133,8 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
     }
 
     private fun setUpRecyclerView() {
+        itemTouchHelper = ItemTouchHelper(RecyclerViewSwipeCallBack())
+        itemTouchHelper.attachToRecyclerView(noteList)
         val query =
             fireStore.collection(NOTE_COLLECTION)
                 .orderBy(GENERATED_DATE, Query.Direction.DESCENDING)
@@ -167,6 +171,16 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
         val intent = Intent(applicationContext, NoteUploadActivity::class.java)
         intent.putExtra(CURRENT_NOTE, note)
         startActivity(intent)
+    }
+
+    override fun deleteNote(position: Int) {
+//        Toast.makeText(
+//            applicationContext,
+//            fireStoreAdapter.snapshots[position].toString(),
+//            Toast.LENGTH_LONG
+//        ).show()
+        val currentNoteId = fireStoreAdapter.snapshots[position].id
+        homeViewModel.deleteNote(currentNoteId)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
