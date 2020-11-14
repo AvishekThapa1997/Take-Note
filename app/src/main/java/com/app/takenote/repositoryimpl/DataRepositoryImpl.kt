@@ -78,5 +78,11 @@ class DataRepositoryImpl(private val fireStore: FirebaseFirestore) : DataReposit
                 onError(SOMETHING_WENT_WRONG)
             }
     }
+
+    override fun deleteNote(noteId: String, onError: (String) -> Unit) {
+        fireStore.collection(NOTE_COLLECTION).document(noteId).delete().addOnFailureListener {
+            onError(SOMETHING_WENT_WRONG)
+        }
+    }
 }
 
