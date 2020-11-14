@@ -20,6 +20,7 @@ val viewModelModules = module {
     viewModel { ProfileViewModel(get<ProfileRepositoryImpl>(), get<DataRepositoryImpl>()) }
     viewModel { SplashViewModel(get<DataRepositoryImpl>()) }
     viewModel { NoteUploadViewModel(get<DataRepositoryImpl>()) }
+    viewModel { HomeViewModel(get<DataRepositoryImpl>()) }
 }
 val firebaseModules = module {
     single { Firebase.auth }
