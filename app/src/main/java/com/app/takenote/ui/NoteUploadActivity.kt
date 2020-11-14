@@ -44,12 +44,16 @@ class NoteUploadActivity : BaseActivity() {
     private fun observeErrorMessage() {
         noteUploadViewModel.message.observe(this) { message ->
             if (message == NOTE_DISCARDED) {
-                val intent = Intent()
-                intent.putExtra(MESSAGE, message)
-                setResult(RESULT_CODE, intent)
+                setResultForPreviousActivity(message)
             }
             finish()
         }
+    }
+
+    private fun setResultForPreviousActivity(message: String) {
+        val intent = Intent()
+        intent.putExtra(MESSAGE, message)
+        setResult(RESULT_CODE, intent)
     }
 
     override fun onPause() {
@@ -106,8 +110,10 @@ class NoteUploadActivity : BaseActivity() {
                 inputs[NOTE_BODY].toString(),
                 currentNote
             )
-        else
+        else {
+            setResultForPreviousActivity(NOTE_DISCARDED)
             finish()
+        }
     }
 
     private fun convertStringToEditable(data: String) =
