@@ -63,6 +63,7 @@ dependencies {
     kapt "com.github.bumptech.glide:compiler:4.11.0"
     implementation "com.facebook.shimmer:shimmer:0.5.0"
     implementation "in.codeshuffle:typewriterview:1.1.0"
+    implementation 'it.xabaras.android:recyclerview-swipedecorator:1.2.3'
 
     def lifecycle_version = "2.2.0"
     // ViewModel
@@ -87,8 +88,4 @@ dependencies {
     implementation "com.google.firebase:firebase-storage-ktx:19.2.0"
     implementation "com.google.firebase:firebase-database-ktx:19.5.1"
     implementation "com.firebaseui:firebase-ui-firestore:6.4.0"
-
-    //jetpack datastore
-//    implementation "androidx.datastore:datastore-preferences:1.0.0-alpha02"
-
 }
