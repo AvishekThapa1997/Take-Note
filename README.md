@@ -17,7 +17,7 @@
          </tr>
 </table>
 
-### Libraries used
+## Libraries used
 
 <ul>
 <li>Firebase Email Authentication</li>
@@ -25,6 +25,6 @@
 <li>Glide</li>
 </ul>
 
-## App Demo
+### App Demo
 <img src="app/record/app_demo.gif">
 
