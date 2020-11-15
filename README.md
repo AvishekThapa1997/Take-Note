@@ -26,5 +26,6 @@
 </ul>
 
 ### App Demo
+
 <img src="app/record/app_demo.gif">
 
