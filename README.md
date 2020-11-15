@@ -17,12 +17,14 @@
          </tr>
 </table>
 
+### Libraries used
+
+<ul>
+<li>Firebase Email Authentication</li>
+<li>Firestore</li>
+<li>Glide</li>
+</ul>
+
 ## App Demo
 <img src="app/record/app_demo.gif">
 
-
-### Libraries used
-
-Firebase Email Authentication
-Firestore
-Glide
