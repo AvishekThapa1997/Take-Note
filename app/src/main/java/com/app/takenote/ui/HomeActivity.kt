@@ -4,8 +4,10 @@ package com.app.takenote.ui
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.app.takenote.R
@@ -40,14 +42,16 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
     private lateinit var profileImage: CircularImageView
     private lateinit var shimmerLayout: ShimmerFrameLayout
     private lateinit var itemTouchHelper: ItemTouchHelper
+    private lateinit var mainQuery: Query
+    private var isFireStoreOptionChanged = false
     private val homeViewModel: HomeViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val intent = intent
         val bundle = intent.getBundleExtra(BUNDLE)
         currentUser = bundle?.getParcelable(CURRENT_USER)
-        setSupportActionBar(toolbar)
         setUpRecyclerView()
+        setSupportActionBar(toolbar)
         addNote.setOnClickListener {
             toNoteUploadActivity()
         }
@@ -55,7 +59,20 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.appbar_menu, menu)
-        val view = menu?.getItem(0)?.actionView!!
+        val view = menu?.findItem(R.id.profileMenu)?.actionView!!
+        val searchView = menu.findItem(R.id.search)
+            .setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+                override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                    if (isFireStoreOptionChanged) {
+                        val recyclerOptions = makeFirebaseRecyclerOptions(mainQuery)
+                        fireStoreAdapter.updateOptions(recyclerOptions)
+                        isFireStoreOptionChanged = false
+                    }
+                    return true
+                }
+
+                override fun onMenuItemActionExpand(item: MenuItem?) = true
+            }).actionView!! as SearchView
         view.setOnClickListener {
             startIntentFor(ProfileActivity::class.java, currentUser)
         }
@@ -71,7 +88,26 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
                 }
             }
         }
+        setUpSearchView(searchView)
         return true
+    }
+
+    private fun setUpSearchView(searchView: SearchView) {
+        searchView.setOnCloseListener {
+            return@setOnCloseListener true
+        }
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (!query.isEmptyOrIsBlank()) {
+                    updateOptions(query!!)
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return true
+            }
+        })
     }
 
     override fun onResume() {
@@ -135,14 +171,14 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
     private fun setUpRecyclerView() {
         itemTouchHelper = ItemTouchHelper(RecyclerViewSwipeCallBack())
         itemTouchHelper.attachToRecyclerView(noteList)
-        val query =
+        mainQuery =
             fireStore.collection(NOTE_COLLECTION)
                 .orderBy(GENERATED_DATE, Query.Direction.DESCENDING)
                 .whereEqualTo(AUTHOR_ID, currentUser?.uid)
-        val recyclerOptions =
-            FirestoreRecyclerOptions.Builder<Note>().setQuery(query, Note::class.java)
-                .setLifecycleOwner(this)
-                .build()
+        val recyclerOptions = makeFirebaseRecyclerOptions(mainQuery)
+        FirestoreRecyclerOptions.Builder<Note>().setQuery(mainQuery, Note::class.java)
+            .setLifecycleOwner(this)
+            .build()
         fireStoreAdapter = NoteAdapter(recyclerOptions, WeakReference(this))
         noteList.setHasFixedSize(true)
         noteList.adapter = fireStoreAdapter
@@ -153,6 +189,12 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
         profileImage = view.profileImage
         shimmerLayout = view.shimmerLayout
     }
+
+    private fun makeFirebaseRecyclerOptions(query: Query) =
+        FirestoreRecyclerOptions.Builder<Note>().setQuery(query, Note::class.java)
+            .setLifecycleOwner(this)
+            .build()
+
 
     private fun toNoteUploadActivity() {
         val intent = Intent(applicationContext, NoteUploadActivity::class.java)
@@ -174,13 +216,19 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
     }
 
     override fun deleteNote(position: Int) {
-//        Toast.makeText(
-//            applicationContext,
-//            fireStoreAdapter.snapshots[position].toString(),
-//            Toast.LENGTH_LONG
-//        ).show()
         val currentNoteId = fireStoreAdapter.snapshots[position].id
         homeViewModel.deleteNote(currentNoteId)
+    }
+
+    fun updateOptions(searchText: String) {
+        val query =
+            fireStore.collection(NOTE_COLLECTION)
+                .orderBy(GENERATED_DATE, Query.Direction.DESCENDING)
+                .whereEqualTo(AUTHOR_ID, currentUser?.uid)
+                .whereEqualTo(NOTE_TITLE, searchText)
+        val fireStoreRecyclerOptions = makeFirebaseRecyclerOptions(query)
+        fireStoreAdapter.updateOptions(fireStoreRecyclerOptions)
+        isFireStoreOptionChanged = true
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
