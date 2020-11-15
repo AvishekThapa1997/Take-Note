@@ -16,3 +16,6 @@
              <td><img src="app/screenshots/9.jpg"></td>
          </tr>
 </table>
+
+## App Demo
+<img src="app/record/app_demo.gif">
