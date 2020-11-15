@@ -112,8 +112,8 @@ class NoteUploadActivity : BaseActivity() {
             )
         else {
             setResultForPreviousActivity(NOTE_DISCARDED)
-            finish()
         }
+        finish()
     }
 
     private fun convertStringToEditable(data: String) =
