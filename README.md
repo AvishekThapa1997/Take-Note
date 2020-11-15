@@ -19,3 +19,10 @@
 
 ## App Demo
 <img src="app/record/app_demo.gif">
+
+
+### Libraries used
+
+Firebase Email Authentication
+Firestore
+Glide
