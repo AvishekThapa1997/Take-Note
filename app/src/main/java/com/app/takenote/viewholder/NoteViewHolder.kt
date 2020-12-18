@@ -8,7 +8,7 @@ import kotlinx.android.synthetic.main.note_layout.view.*
 import java.lang.ref.WeakReference
 
 class NoteViewHolder(
-    private val mView: View,
+   val mView: View,
     private val weakReference: WeakReference<ClickListener>
 ) : RecyclerView.ViewHolder(mView) {
 
@@ -18,5 +18,9 @@ class NoteViewHolder(
         mView.setOnClickListener {
             weakReference.get()?.onClick(currentNote)
         }
+    }
+
+    fun deleteNote() {
+        weakReference.get()?.deleteNote(adapterPosition)
     }
 }
