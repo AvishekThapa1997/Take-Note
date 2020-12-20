@@ -2,6 +2,7 @@ package com.app.takenote.ui
 
 import android.os.Bundle
 import com.app.takenote.R
+import com.app.takenote.extensions.isEmptyOrIsBlank
 import com.app.takenote.utility.CustomTypeWriterListener
 import com.app.takenote.utility.Success
 import com.app.takenote.viewmodels.SplashViewModel
@@ -36,7 +37,13 @@ class SplashActivity : BaseActivity() {
     private fun observeExistenceUser() {
         splashViewModel.currentUser.observe(this) { response ->
             when (response) {
-                is Success -> startIntentFor(HomeActivity::class.java, response.data)
+                is Success -> {
+                    val currentUser = response.data
+                    if (currentUser.fullName.isEmptyOrIsBlank())
+                        startIntentFor(AddProfileActivity::class.java, response.data)
+                    else
+                        startIntentFor(HomeActivity::class.java, response.data)
+                }
                 is Error -> toLoginActivity()
             }
             finish()

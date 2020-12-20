@@ -1,10 +1,8 @@
 package com.app.takenote.repository
 
 interface ProfileRepository{
-    fun uploadImage(
+    suspend fun uploadImage(
         primaryId: String,
         filePath: String,
-        onSuccess: (String) -> Unit,
-        onError: (String) -> Unit,
-    )
+    ) : String
 }

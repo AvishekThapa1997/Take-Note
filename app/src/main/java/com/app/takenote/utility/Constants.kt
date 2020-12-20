@@ -72,3 +72,9 @@ const val MESSAGE ="message"
 const val RESULT_CODE = 1
 
 const val REQUEST_CODE = 0
+
+const val IMAGE_FILE_PATH ="file_path"
+
+const val WORKER_RESULT = "worker result"
+
+const val USER_ID = "userID"

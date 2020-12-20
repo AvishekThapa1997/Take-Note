@@ -4,9 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.constraintlayout.widget.Group
+import androidx.work.WorkManager
 import com.app.takenote.R
 import com.app.takenote.extensions.isEmptyOrIsBlank
-import com.app.takenote.extensions.onBackground
+import com.app.takenote.extensions.setImageUrlUploadWorker
+import com.app.takenote.extensions.setUpImageUploadWorker
 import com.app.takenote.pojo.User
 import com.app.takenote.utility.*
 import com.app.takenote.viewmodels.AddProfileViewModel
@@ -15,9 +17,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.add_profile.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.koin.android.viewmodel.ext.android.viewModel
+import java.util.*
 
 class AddProfileActivity : BaseActivity() {
     override val layoutResourceId = R.layout.add_profile
@@ -25,8 +26,10 @@ class AddProfileActivity : BaseActivity() {
     private var currentUser: User? = null
     private var realTimeListener: ListenerRegistration? = null
     private lateinit var group: Group
+    private lateinit var workManager: WorkManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        workManager = WorkManager.getInstance(this)
         intent.getBundleExtra(BUNDLE)?.apply {
             currentUser = getParcelable(CURRENT_USER)
         }
@@ -57,8 +60,7 @@ class AddProfileActivity : BaseActivity() {
             when (error) {
                 is ImageUploadError -> {
                     showMessage(error.message)
-                    uploadProgress.hide()
-                    addPhotoIcon.showView()
+                    hideImageUploadProgress()
                 }
                 is NameUpdateError -> {
                     showMessage(error.message)
@@ -112,21 +114,40 @@ class AddProfileActivity : BaseActivity() {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             val result = CropImage.getActivityResult(data)
             if (resultCode == RESULT_OK) {
-                onBackground {
-                    val uri = result.uri
-                    val filePath = uri.path
-                    withContext(Dispatchers.Main) {
-                        addPhotoIcon.visibility = View.GONE
-                        uploadProgress.show()
-                        addProfileViewModel.uploadPhoto(
-                            filePath!!,
-                            currentUser?.uid!!
-                        )
-                    }
+                val uri = result.uri
+                val filePath = uri.path
+                showImageUploadProgress()
+                currentUser?.uid?.let { userId ->
+                    val oneTimeImageUploadRequest = setUpImageUploadWorker(userId, filePath!!)
+                    workManager.beginWith(oneTimeImageUploadRequest).then(setImageUrlUploadWorker())
+                        .enqueue()
+                    observeResultFromImageUploadWorker(oneTimeImageUploadRequest.id)
                 }
             }
         } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE)
             showMessage(UNABLE_TO_UPLOAD)
+    }
+
+    private fun observeResultFromImageUploadWorker(id: UUID) {
+        workManager.getWorkInfoByIdLiveData(id).observe(this) { workInfo ->
+            if (workInfo != null && workInfo.state.isFinished) {
+                val result = workInfo.outputData.getString(WORKER_RESULT)
+                if (result != null && result == SOMETHING_WENT_WRONG) {
+                    showMessage(result)
+                    hideImageUploadProgress()
+                }
+            }
+        }
+    }
+
+    private fun showImageUploadProgress() {
+        addPhotoIcon.hideView(View.GONE)
+        uploadProgress.show()
+    }
+
+    private fun hideImageUploadProgress() {
+        addPhotoIcon.showView()
+        uploadProgress.hide()
     }
 
     private fun enabledGroup() {

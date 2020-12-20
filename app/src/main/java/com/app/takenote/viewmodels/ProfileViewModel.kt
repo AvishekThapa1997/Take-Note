@@ -19,19 +19,6 @@ class ProfileViewModel(
     val logout: LiveData<String>
         get() = _logout
 
-    fun updateProfilePhoto(primaryId: String, imageUrl: String) {
-        profileRepository.uploadImage(primaryId, imageUrl, { updatedImageUrl ->
-            dataRepository.updateUserData(
-                primaryId,
-                mutableMapOf(IMAGE_URL to updatedImageUrl)
-            ) { updatedError ->
-                setImageUploadError(updatedError)
-            }
-        }, { uploadError ->
-            setImageUploadError(uploadError)
-        })
-    }
-
     fun updateName(primaryId: String, updatedName: String) {
         dataRepository.updateUserData(
             primaryId,

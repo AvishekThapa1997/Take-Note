@@ -39,11 +39,11 @@ class DataRepositoryImpl(private val fireStore: FirebaseFirestore) : DataReposit
     override fun updateUserData(
         primaryId: String,
         updatedData: Map<String, String>,
-        onError: ((String) -> Unit)
+        onError: ((String) -> Unit)?
     ) {
         fireStore.collection(COLLECTION_NAME).document(primaryId).update(updatedData)
             .addOnFailureListener {
-                onError.invoke(SOMETHING_WENT_WRONG)
+                onError?.invoke(SOMETHING_WENT_WRONG)
             }
     }
 

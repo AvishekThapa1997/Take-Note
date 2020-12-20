@@ -21,7 +21,7 @@ interface DataRepository {
     fun updateUserData(
         primaryId: String,
         updatedData: Map<String, String>,
-        onError: ((String) -> Unit)
+        onError: ((String) -> Unit)? = null
     )
 
     fun storeNote(note: Note, onError: (String) -> Unit)
