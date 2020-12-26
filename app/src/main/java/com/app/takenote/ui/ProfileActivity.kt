@@ -8,6 +8,7 @@ import com.app.takenote.R
 import com.app.takenote.extensions.isEmptyOrIsBlank
 import com.app.takenote.extensions.setImageUrlUploadWorker
 import com.app.takenote.extensions.setUpImageUploadWorker
+import com.app.takenote.extensions.setWork
 import com.app.takenote.pojo.User
 import com.app.takenote.ui.bottomsheet.UpdateNameBottomSheet
 import com.app.takenote.utility.*
@@ -163,10 +164,8 @@ class ProfileActivity : BaseActivity() {
                 profileNameInitialLetter.hideView(View.INVISIBLE)
                 changeProfilePicture.hide()
                 currentUser?.uid?.let { userId ->
-                    val oneTimeImageUploadRequest = setUpImageUploadWorker(userId, filePath!!)
-                    workManager.beginWith(oneTimeImageUploadRequest).then(setImageUrlUploadWorker())
-                        .enqueue()
-                    observeResultFromImageUploadWorker(oneTimeImageUploadRequest.id)
+                    val imageUploadWorker = workManager.setWork(userId, filePath!!)
+                    observeResultFromImageUploadWorker(imageUploadWorker.id)
                 }
             }
         } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE)

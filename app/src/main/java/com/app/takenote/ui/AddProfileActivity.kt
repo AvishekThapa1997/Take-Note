@@ -4,11 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.constraintlayout.widget.Group
+import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import com.app.takenote.R
 import com.app.takenote.extensions.isEmptyOrIsBlank
 import com.app.takenote.extensions.setImageUrlUploadWorker
 import com.app.takenote.extensions.setUpImageUploadWorker
+import com.app.takenote.extensions.setWork
 import com.app.takenote.pojo.User
 import com.app.takenote.utility.*
 import com.app.takenote.viewmodels.AddProfileViewModel
@@ -69,7 +71,6 @@ class AddProfileActivity : BaseActivity() {
                     enabledGroup()
                 }
             }
-
         }
     }
 
@@ -118,10 +119,8 @@ class AddProfileActivity : BaseActivity() {
                 val filePath = uri.path
                 showImageUploadProgress()
                 currentUser?.uid?.let { userId ->
-                    val oneTimeImageUploadRequest = setUpImageUploadWorker(userId, filePath!!)
-                    workManager.beginWith(oneTimeImageUploadRequest).then(setImageUrlUploadWorker())
-                        .enqueue()
-                    observeResultFromImageUploadWorker(oneTimeImageUploadRequest.id)
+                    val imageUploadWorker = workManager.setWork(userId, filePath!!)
+                    observeResultFromImageUploadWorker(imageUploadWorker.id)
                 }
             }
         } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE)

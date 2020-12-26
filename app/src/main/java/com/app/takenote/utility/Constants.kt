@@ -78,3 +78,5 @@ const val IMAGE_FILE_PATH ="file_path"
 const val WORKER_RESULT = "worker result"
 
 const val USER_ID = "userID"
+
+const val PROFILE_IMAGE_UPLOAD = "profile image upload"
