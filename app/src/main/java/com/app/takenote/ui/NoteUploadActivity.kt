@@ -1,16 +1,27 @@
 package com.app.takenote.ui
 
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.EditText
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import com.app.takenote.R
+import com.app.takenote.extensions.setData
 import com.app.takenote.pojo.Note
 import com.app.takenote.pojo.User
 import com.app.takenote.utility.*
 import com.app.takenote.viewmodels.NoteUploadViewModel
 import kotlinx.android.synthetic.main.activity_note_take.*
 import org.koin.android.viewmodel.ext.android.viewModel
+import java.text.DateFormatSymbols
+import java.util.*
 
 
 class NoteUploadActivity : BaseActivity() {
@@ -20,21 +31,31 @@ class NoteUploadActivity : BaseActivity() {
     private val noteUploadViewModel: NoteUploadViewModel by viewModel()
     private var currentUser: User? = null
     private var currentNote: Note? = null
+
+    private val calendar: Calendar by lazy {
+        Calendar.getInstance()
+    }
+    private val months: Array<String> by lazy {
+        DateFormatSymbols().months
+    }
+    private val todayDate: Date by lazy {
+        Date()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val bundle = intent.getBundleExtra(BUNDLE)
         currentUser = bundle?.getParcelable(CURRENT_USER)
-        if (intent.hasExtra(CURRENT_NOTE)) {
-            currentNote = intent.getParcelableExtra(CURRENT_NOTE)
+        if (bundle?.containsKey(CURRENT_NOTE) == true) {
+            currentNote = bundle.getParcelable(CURRENT_NOTE)
         }
         currentNote?.apply {
             noteTitle.text = convertStringToEditable(title)
             noteBody.text = convertStringToEditable(body)
         }
-        previous.setOnClickListener {
-            uploadNote()
-        }
-        save.setOnClickListener {
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = ""
+        toolbar.setNavigationOnClickListener {
             uploadNote()
         }
         openKeyboard()
@@ -48,6 +69,21 @@ class NoteUploadActivity : BaseActivity() {
             }
             finish()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.note_toolbar_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val menuId = item.itemId
+        if (menuId == R.id.save)
+            uploadNote()
+        else {
+            showAddReminderDialog()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun setResultForPreviousActivity(message: String) {
@@ -85,8 +121,10 @@ class NoteUploadActivity : BaseActivity() {
 
     private fun saveNote() {
         val inputs = inputsFromUI()
-        if (isKeyboardVisible)
+        if (isKeyboardVisible) {
             hideKeyboard(currentFocus?.windowToken)
+            isKeyboardVisible = false
+        }
         noteUploadViewModel.uploadNote(
             inputs[NOTE_TITLE].toString(),
             inputs[NOTE_BODY].toString(),
@@ -118,4 +156,41 @@ class NoteUploadActivity : BaseActivity() {
 
     private fun convertStringToEditable(data: String) =
         Editable.Factory.getInstance().newEditable(data)
+
+    private fun showAddReminderDialog() {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        val dialogView = layoutInflater.inflate(R.layout.reminder_dialog, rootView, false)
+        val btnShowDatePicker = dialogView.extractView<EditText>(R.id.selectDate)
+        val selectTime = dialogView.extractView<EditText>(R.id.selectTime)
+        val btnCancel = dialogView.extractView<TextView>(R.id.tvCancel)
+        alertDialogBuilder.setView(dialogView)
+        alertDialogBuilder.setCancelable(false)
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+        btnCancel.setOnClickListener {
+            alertDialog.cancel()
+        }
+        btnShowDatePicker.setOnClickListener {
+            if (isKeyboardVisible) {
+                hideKeyboard(currentFocus?.windowToken)
+                showDatePicker(it as EditText)
+            }
+        }
+    }
+
+    private fun showDatePicker(editText: EditText) {
+        val datePickerDialog = DatePickerDialog(
+            this,
+            { _, _, month, dayOfMonth ->
+                editText.setData("$dayOfMonth ${months[month]}")
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONDAY),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+        datePickerDialog.datePicker.minDate = todayDate.time
+        datePickerDialog.show()
+    }
+
+    private fun <T : View> View.extractView(viewId: Int) = findViewById<T>(viewId)
 }

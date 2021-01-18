@@ -3,6 +3,7 @@ package com.app.takenote.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -213,13 +214,16 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
             .build()
 
 
-    private fun toNoteUploadActivity() {
-        val intent = Intent(applicationContext, NoteUploadActivity::class.java)
-        val bundle = Bundle()
-        bundle.putParcelable(CURRENT_USER, currentUser)
-        intent.putExtra(BUNDLE, bundle)
-        startActivityForResult(intent, REQUEST_CODE)
-
+    private fun toNoteUploadActivity(mIntent: Intent? = null) {
+        if (mIntent == null) {
+            val intent = Intent(applicationContext, NoteUploadActivity::class.java)
+            val bundle = Bundle()
+            bundle.putParcelable(CURRENT_USER, currentUser)
+            intent.putExtra(BUNDLE, bundle)
+            startActivityForResult(intent, REQUEST_CODE)
+        } else {
+            startActivity(intent)
+        }
     }
 
     override fun enabledFullScreen(): Boolean = false
@@ -228,8 +232,11 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
 
     override fun onClick(note: Note) {
         val intent = Intent(applicationContext, NoteUploadActivity::class.java)
-        intent.putExtra(CURRENT_NOTE, note)
-        startActivity(intent)
+        val bundle = Bundle()
+        bundle.putParcelable(CURRENT_NOTE, note)
+        bundle.putParcelable(CURRENT_USER, currentUser)
+        intent.putExtra(BUNDLE, bundle)
+        toNoteUploadActivity(intent)
     }
 
     override fun deleteNote(position: Int) {
