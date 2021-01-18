@@ -27,4 +27,6 @@
     <string name="title">Title</string>
     <string name="note">Note</string>
     <string name="add_note">Add Note</string>
+    <string name="search_hint">Search Note</string>
+    <string name="add_reminder">Add Reminder</string>
 </resources>

@@ -80,3 +80,5 @@ const val WORKER_RESULT = "worker result"
 const val USER_ID = "userID"
 
 const val PROFILE_IMAGE_UPLOAD = "profile image upload"
+
+const val REMINDER_DIALOG = "reminder_dialog"
