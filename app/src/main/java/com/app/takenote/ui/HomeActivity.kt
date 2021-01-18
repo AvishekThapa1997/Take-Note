@@ -222,7 +222,7 @@ class HomeActivity : BaseActivity(), View.OnClickListener, ClickListener {
             intent.putExtra(BUNDLE, bundle)
             startActivityForResult(intent, REQUEST_CODE)
         } else {
-            startActivity(intent)
+            startActivity(mIntent)
         }
     }
 
