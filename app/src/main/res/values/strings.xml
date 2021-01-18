@@ -28,5 +28,7 @@
     <string name="note">Note</string>
     <string name="add_note">Add Note</string>
     <string name="search_hint">Search Note</string>
-    <string name="add_reminder">Add Reminder</string>
+    <string name="add_reminder">Add Reminder</string>ng>
+    <string name="select_time">Select Time</string>
+    <string name="select_date">Select Date</string>
 </resources>

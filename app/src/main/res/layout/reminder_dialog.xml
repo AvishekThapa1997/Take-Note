@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/layoutTopGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.08" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/layoutBottomGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.92" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/layoutStartGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/layoutEndGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <androidx.constraintlayout.helper.widget.Flow
+        android:id="@+id/flowContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:constraint_referenced_ids="tvAddReminder,selectDate,selectTime,actionButtonEvents"
+        app:flow_maxElementsWrap="1"
+        app:flow_verticalGap="12dp"
+        app:flow_wrapMode="aligned"
+        app:layout_constraintBottom_toBottomOf="@id/layoutBottomGuideline"
+        app:layout_constraintEnd_toEndOf="@id/layoutEndGuideline"
+        app:layout_constraintStart_toStartOf="@id/layoutStartGuideline"
+        app:layout_constraintTop_toTopOf="@id/layoutTopGuideline" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvAddReminder"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/medium"
+        android:text="@string/add_reminder"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/lightBlack" />
+
+    <EditText
+        android:id="@+id/selectDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:focusableInTouchMode="false"
+        android:fontFamily="@font/medium"
+        android:inputType="date"
+        android:text="@string/select_date"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
+    <EditText
+        android:id="@+id/selectTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:fontFamily="@font/medium"
+        android:inputType="text"
+        android:text="@string/select_time"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
+    <androidx.constraintlayout.helper.widget.Flow
+        android:id="@+id/actionButtonEvents"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="tvCancel,btnSave"
+        app:flow_maxElementsWrap="2"
+        app:flow_wrapMode="chain" />
+
+    <TextView
+        android:id="@+id/tvCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:text="@string/cancel"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/lightBlack"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/save" />
+</androidx.constraintlayout.widget.ConstraintLayout>
