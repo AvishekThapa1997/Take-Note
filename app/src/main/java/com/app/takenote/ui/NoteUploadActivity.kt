@@ -2,25 +2,35 @@ package com.app.takenote.ui
 
 
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
-import android.view.LayoutInflater
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.app.takenote.R
-import com.app.takenote.extensions.setData
+import com.app.takenote.extensions.*
 import com.app.takenote.pojo.Note
 import com.app.takenote.pojo.User
 import com.app.takenote.utility.*
+import com.app.takenote.utility.DateUtil
+import com.app.takenote.utility.DateUtil.formattedValue
+import com.app.takenote.utility.DateUtil.getMonthName
 import com.app.takenote.viewmodels.NoteUploadViewModel
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_note_take.*
+import kotlinx.android.synthetic.main.reminder_layout.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.android.viewmodel.ext.android.viewModel
-import java.text.DateFormatSymbols
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -31,17 +41,12 @@ class NoteUploadActivity : BaseActivity() {
     private val noteUploadViewModel: NoteUploadViewModel by viewModel()
     private var currentUser: User? = null
     private var currentNote: Note? = null
-
-    private val calendar: Calendar by lazy {
-        Calendar.getInstance()
-    }
-    private val months: Array<String> by lazy {
-        DateFormatSymbols().months
-    }
-    private val todayDate: Date by lazy {
-        Date()
-    }
-
+    private var daySelected: String = ""
+    private var timeSelected: String = ""
+    private var selectedDate: Date? = null
+    private var dayToShow: String = ""
+    private var timeToShow: String = ""
+    private var formattedDateAndTime: MutableMap<String, String>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val bundle = intent.getBundleExtra(BUNDLE)
@@ -52,6 +57,29 @@ class NoteUploadActivity : BaseActivity() {
         currentNote?.apply {
             noteTitle.text = convertStringToEditable(title)
             noteBody.text = convertStringToEditable(body)
+            onBackground {
+                Log.i("TAG", "onCreate: ${Thread.currentThread().name}")
+                if (!reminderTime.isEmptyOrIsBlank()) {
+                    val time = reminderTime.toLongOrNull() ?: 0
+                    if (time > DateUtil.currentTime) {
+                        DateUtil.calendar.setCurrentTime(Date(time))
+                        val formattedDate = DateUtil.formattedDate(
+                            DateUtil.calendar.year,
+                            DateUtil.calendar.dayOfMonth,
+                            DateUtil.calendar.month,
+                            DateUtil.calendar.hourOfDay,
+                            DateUtil.calendar.minute
+                        )
+                        formattedDateAndTime = formattedDate
+                        val dateToShow = "${formattedDate[FORMATTED_DAY]}," +
+                                "${formattedDate[FORMATTED_TIME]}"
+                        withContext(Dispatchers.Main) {
+                            tvSelectedDate.text = dateToShow
+                            flowReminderContainer.visibility = View.VISIBLE
+                        }
+                    }
+                }
+            }
         }
         setSupportActionBar(toolbar)
         supportActionBar?.title = ""
@@ -128,7 +156,8 @@ class NoteUploadActivity : BaseActivity() {
         noteUploadViewModel.uploadNote(
             inputs[NOTE_TITLE].toString(),
             inputs[NOTE_BODY].toString(),
-            currentUser?.uid!!
+            currentUser?.uid!!,
+            "${selectedDate?.time ?: ""}"
         )
         finish()
     }
@@ -161,36 +190,121 @@ class NoteUploadActivity : BaseActivity() {
         val alertDialogBuilder = AlertDialog.Builder(this)
         val dialogView = layoutInflater.inflate(R.layout.reminder_dialog, rootView, false)
         val btnShowDatePicker = dialogView.extractView<EditText>(R.id.selectDate)
-        val selectTime = dialogView.extractView<EditText>(R.id.selectTime)
+        val btnShowTimePicker = dialogView.extractView<EditText>(R.id.selectTime)
         val btnCancel = dialogView.extractView<TextView>(R.id.tvCancel)
+        val btnApply = dialogView.extractView<Button>(R.id.btnSave)
         alertDialogBuilder.setView(dialogView)
         alertDialogBuilder.setCancelable(false)
         val alertDialog = alertDialogBuilder.create()
+        formattedDateAndTime?.apply {
+            if (isNotEmpty()) {
+                btnShowDatePicker.setData(get(FORMATTED_DAY) ?: "Select Date")
+                btnShowTimePicker.setData(get(FORMATTED_TIME) ?: "Select Time")
+            }
+        }
         alertDialog.show()
         btnCancel.setOnClickListener {
             alertDialog.cancel()
         }
         btnShowDatePicker.setOnClickListener {
+            DateUtil.calendar.setCurrentTime(Date())
             if (isKeyboardVisible) {
                 hideKeyboard(currentFocus?.windowToken)
                 showDatePicker(it as EditText)
             }
+        }
+        btnShowTimePicker.setOnClickListener {
+            DateUtil.calendar.setCurrentTime(Date())
+            if (isKeyboardVisible) {
+                hideKeyboard(currentFocus?.windowToken)
+                showTimePicker(it as EditText)
+            }
+        }
+        btnApply.setOnClickListener {
+            if (!daySelected.isEmptyOrIsBlank() && !timeSelected.isEmptyOrIsBlank()) {
+                val dateInString = daySelected.plus(":$timeSelected")
+                selectedDate = SimpleDateFormat(
+                    "yyyy-MM-dd:HH:mm",
+                    Locale.getDefault()
+                ).parse(dateInString.substring(0, dateInString.indexOf(" ")))
+                selectedDate?.let { _selectedDate ->
+                    if (DateUtil.currentTime > _selectedDate.time) {
+                        Toast.makeText(this, "Invalid Time", Toast.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    } else {
+                        tvSelectedDate.text = dayToShow.plus(",").plus(timeToShow)
+                        flowReminderContainer.visibility = View.VISIBLE
+                    }
+                }
+            } else {
+                Snackbar.make(rootView, "Time Discarded", Snackbar.LENGTH_SHORT).show()
+            }
+            alertDialog.cancel()
         }
     }
 
     private fun showDatePicker(editText: EditText) {
         val datePickerDialog = DatePickerDialog(
             this,
-            { _, _, month, dayOfMonth ->
-                editText.setData("$dayOfMonth ${months[month]}")
+            { _, year, month, dayOfMonth ->
+                daySelected = "${year}-${formattedValue(month + 1, dayOfMonth, "-")}"
+                dayToShow = "$dayOfMonth ${getMonthName(month)}"
+                editText.setData(dayToShow)
             },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONDAY),
-            calendar.get(Calendar.DAY_OF_MONTH)
+            DateUtil.calendar.year,
+            DateUtil.calendar.month,
+            DateUtil.calendar.dayOfMonth
         )
-        datePickerDialog.datePicker.minDate = todayDate.time
+        datePickerDialog.datePicker.minDate = DateUtil.currentTime
         datePickerDialog.show()
     }
 
+    private fun showTimePicker(editText: EditText) {
+        val currentHour = DateUtil.calendar.hourOfDay
+        val currentMinute = DateUtil.calendar.minute
+        val timePickerDialog = TimePickerDialog(
+            this, { _, hourOfDay, minute ->
+                timeSelected = when (hourOfDay) {
+                    0 -> {
+                        val formattedTime = formattedValue(0, minute, ":").plus(" $AM")
+                        timeToShow = "12:${
+                            formattedTime.substring(
+                                formattedTime.indexOf(":") + 1
+                            )
+                        }"
+                        editText.setData(timeToShow)
+                        formattedTime
+                    }
+                    in 1..11 -> {
+                        val formattedTime = formattedValue(hourOfDay, minute, ":").plus(" $AM")
+                        timeToShow = formattedTime
+                        editText.setData(formattedTime)
+                        formattedTime
+                    }
+                    else -> {
+                        val time = if (hourOfDay - 12 != 0)
+                            hourOfDay - 12
+                        else
+                            12
+                        val formattedTime = formattedValue(hourOfDay, minute, ":").plus(" $PM")
+                        timeToShow = "$time:${
+                            formattedTime.substring(
+                                formattedTime.indexOf(":") + 1
+                            )
+                        }"
+                        editText.setData(timeToShow)
+                        formattedTime
+                    }
+                }
+            },
+            currentHour,
+            currentMinute,
+            false
+        )
+        timePickerDialog.show()
+    }
+
     private fun <T : View> View.extractView(viewId: Int) = findViewById<T>(viewId)
+
+
 }

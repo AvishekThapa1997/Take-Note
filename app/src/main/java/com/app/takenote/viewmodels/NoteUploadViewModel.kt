@@ -8,6 +8,7 @@ import com.app.takenote.extensions.isEmptyOrIsBlank
 import com.app.takenote.extensions.runIO
 import com.app.takenote.pojo.Note
 import com.app.takenote.repository.DataRepository
+import com.app.takenote.utility.DateUtil
 import com.app.takenote.utility.NOTE_DISCARDED
 import java.util.*
 
@@ -17,32 +18,39 @@ class NoteUploadViewModel(private val dataRepository: DataRepository) : ViewMode
     val message: LiveData<String>
         get() = _message
 
-    fun uploadNote(noteTitle: String, noteBody: String, userId: String) {
+    fun uploadNote(noteTitle: String, noteBody: String, userId: String, reminderTime: String) {
         runIO {
             //var isSuccess = true
             if (noteTitle.isEmptyOrIsBlank() || noteBody.isEmptyOrIsBlank())
                 _message.value = NOTE_DISCARDED
             else {
-                val note = Note(id = "", noteTitle, noteBody, userId, Date().time.toString())
+                val note = Note(
+                    id = "",
+                    noteTitle,
+                    noteBody,
+                    userId,
+                    "${DateUtil.currentTime}",
+                    reminderTime
+                )
                 dataRepository.storeNote(note) { errorMessage ->
                     _message.value = errorMessage
                     //isSuccess = false
                 }
-               // setSuccess(isSuccess)
+                // setSuccess(isSuccess)
             }
         }
     }
 
     fun updateNote(noteTitle: String, noteBody: String, note: Note) {
         runIO {
-           // var isSuccess = true
+            // var isSuccess = true
             if (noteTitle.isEmptyOrIsBlank() || noteBody.isEmptyOrIsBlank())
                 _message.value = NOTE_DISCARDED
             else {
                 val updatedNote = note.copy(title = noteTitle, body = noteBody)
                 dataRepository.updateNote(updatedNote) { errorMessage ->
                     _message.value = errorMessage
-                   // isSuccess = false
+                    // isSuccess = false
                 }
                 //setSuccess(isSuccess)
             }
