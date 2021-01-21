@@ -63,17 +63,17 @@ const val AUTHOR_ID = "authorId"
 
 const val CURRENT_NOTE = "current_note"
 
-const val GENERATED_DATE ="generatedDate"
+const val GENERATED_DATE = "generatedDate"
 
 const val NOTE_DISCARDED = "Note Discarded"
 
-const val MESSAGE ="message"
+const val MESSAGE = "message"
 
 const val RESULT_CODE = 1
 
 const val REQUEST_CODE = 0
 
-const val IMAGE_FILE_PATH ="file_path"
+const val IMAGE_FILE_PATH = "file_path"
 
 const val WORKER_RESULT = "worker result"
 
@@ -81,4 +81,12 @@ const val USER_ID = "userID"
 
 const val PROFILE_IMAGE_UPLOAD = "profile image upload"
 
-const val REMINDER_DIALOG = "reminder_dialog"
+const val REMINDER_TIME = "reminderTime"
+
+const val AM = "AM"
+
+const val PM = "PM"
+
+const val FORMATTED_DAY = "formatted_day"
+
+const val FORMATTED_TIME = "formatted_time"
