@@ -74,7 +74,7 @@
         android:fontFamily="@font/regular"
         android:hint="@string/title"
         android:importantForAutofill="no"
-        android:inputType="text"
+        android:inputType="textMultiLine"
         android:minHeight="32dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         app:layout_constraintEnd_toEndOf="@id/endGuideline"
@@ -84,20 +84,56 @@
     <EditText
         android:id="@+id/noteBody"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:background="@android:color/transparent"
         android:fontFamily="@font/regular"
         android:gravity="clip_vertical"
         android:hint="@string/note"
         android:importantForAutofill="no"
-        android:inputType="text"
+        android:inputType="textMultiLine"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintBottom_toBottomOf="@id/bottomGuideline"
+        app:layout_constraintBottom_toTopOf="@id/noteBodyBarrier"
         app:layout_constraintEnd_toEndOf="@id/endGuideline"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@id/startGuideline"
-        app:layout_constraintTop_toBottomOf="@id/noteTitle"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@id/noteTitle" />
 
+    <include layout="@layout/reminder_layout" />
+    <!--    <androidx.constraintlayout.helper.widget.Flow-->
+    <!--        android:id="@+id/flowReminderContainer"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="0dp"-->
+    <!--        android:layout_marginTop="16dp"-->
+    <!--        android:background="@drawable/reminder_drawable"-->
+    <!--        android:padding="8dp"-->
+    <!--        android:visibility="gone"-->
+    <!--        app:constraint_referenced_ids="imgvReminderIcon,tvSelectedDate"-->
+    <!--        app:flow_horizontalGap="8dp"-->
+    <!--        app:flow_maxElementsWrap="2"-->
+    <!--        app:flow_wrapMode="aligned"-->
+    <!--        app:layout_constraintStart_toStartOf="@id/startGuideline"-->
+    <!--        app:layout_constraintTop_toBottomOf="@id/noteBodyBarrier" />-->
+
+    <!--    <ImageView-->
+    <!--        android:id="@+id/imgvReminderIcon"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:contentDescription="@string/reminder_icon"-->
+    <!--        app:srcCompat="@drawable/add_reminder" />-->
+
+    <!--    <TextView-->
+    <!--        android:id="@+id/tvSelectedDate"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:fontFamily="@font/medium"-->
+    <!--        android:textAppearance="@style/TextAppearance.AppCompat.Medium"-->
+    <!--        android:textColor="@color/lightBlack"-->
+    <!--        tools:text="15 Dec,2020" />-->
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/noteBodyBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="noteBody" />
 </androidx.constraintlayout.widget.ConstraintLayout>

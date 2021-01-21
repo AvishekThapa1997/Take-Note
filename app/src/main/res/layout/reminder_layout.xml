@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <androidx.constraintlayout.helper.widget.Flow
+        android:id="@+id/flowReminderContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/reminder_drawable"
+        android:padding="6dp"
+        android:visibility="gone"
+        app:constraint_referenced_ids="imgvReminderIcon,tvSelectedDate"
+        app:flow_horizontalGap="8dp"
+        app:flow_maxElementsWrap="2"
+        app:flow_wrapMode="aligned"
+        app:layout_constraintStart_toStartOf="@id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@id/noteBodyBarrier" />
+
+    <ImageView
+        android:id="@+id/imgvReminderIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/reminder_icon"
+        app:srcCompat="@drawable/reminer" />
+
+    <TextView
+        android:id="@+id/tvSelectedDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/medium"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="@color/lightBlack"
+        tools:text="15 Dec,2020" />
+</merge>
