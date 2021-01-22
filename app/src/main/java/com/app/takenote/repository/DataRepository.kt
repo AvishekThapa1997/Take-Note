@@ -26,7 +26,7 @@ interface DataRepository {
 
     fun storeNote(note: Note, onError: (String) -> Unit)
 
-    fun updateNote(note : Note,onError: (String) -> Unit)
+    fun updateNote(updatedData: Map<String, String>, noteId: String, onError: (String) -> Unit)
 
-    fun deleteNote(noteId : String,onError: (String) -> Unit)
+    fun deleteNote(noteId: String, onError: (String) -> Unit)
 }

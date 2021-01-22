@@ -41,14 +41,13 @@ class NoteUploadViewModel(private val dataRepository: DataRepository) : ViewMode
         }
     }
 
-    fun updateNote(noteTitle: String, noteBody: String, note: Note) {
+    fun updateNote(updatedData: Map<String, String>, note: Note) {
         runIO {
             // var isSuccess = true
-            if (noteTitle.isEmptyOrIsBlank() || noteBody.isEmptyOrIsBlank())
+            if (updatedData.isNullOrEmpty())
                 _message.value = NOTE_DISCARDED
             else {
-                val updatedNote = note.copy(title = noteTitle, body = noteBody)
-                dataRepository.updateNote(updatedNote) { errorMessage ->
+                dataRepository.updateNote(updatedData,note.id) { errorMessage ->
                     _message.value = errorMessage
                     // isSuccess = false
                 }

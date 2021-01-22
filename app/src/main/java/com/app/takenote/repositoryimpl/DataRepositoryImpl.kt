@@ -1,6 +1,7 @@
 package com.app.takenote.repositoryimpl
 
 
+import android.util.Log
 import com.app.takenote.pojo.Note
 import com.app.takenote.pojo.User
 import com.app.takenote.repository.DataRepository
@@ -69,11 +70,11 @@ class DataRepositoryImpl(private val fireStore: FirebaseFirestore) : DataReposit
     }
 
     override fun updateNote(
-        note: Note,
+        updatedData: Map<String, String>,
+        noteId: String,
         onError: (String) -> Unit
     ) {
-        val updatedData = note.toMap()
-        fireStore.collection(NOTE_COLLECTION).document(note.id).update(updatedData)
+        fireStore.collection(NOTE_COLLECTION).document(noteId).update(updatedData)
             .addOnFailureListener {
                 onError(SOMETHING_WENT_WRONG)
             }

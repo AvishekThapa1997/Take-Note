@@ -9,6 +9,7 @@ import com.app.takenote.pojo.Note
 import com.app.takenote.utility.DateUtil
 import com.app.takenote.utility.FORMATTED_DAY
 import com.app.takenote.utility.FORMATTED_TIME
+import com.app.takenote.utility.TIME_MERIDIAN
 import kotlinx.android.synthetic.main.note_layout.view.*
 import kotlinx.android.synthetic.main.reminder_layout.view.*
 import java.lang.ref.WeakReference
@@ -41,7 +42,10 @@ class NoteViewHolder(
                     DateUtil.calendar.minute
                 )
                 val dateToShow: String = if (formattedDate is Map<*, *>) {
-                    val value = "${formattedDate[FORMATTED_DAY]},${formattedDate[FORMATTED_TIME]}"
+                    val value = "${formattedDate[FORMATTED_DAY]},${
+                        formattedDate[FORMATTED_TIME].toString()
+                            .plus(" ${formattedDate[TIME_MERIDIAN]}")
+                    }"
                     cacheTime[currentNote.id] = value
                     value
                 } else {
