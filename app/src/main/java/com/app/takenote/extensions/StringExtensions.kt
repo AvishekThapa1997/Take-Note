@@ -20,3 +20,6 @@ fun String.validPassword(): String {
         return PASSWORD_SHOULD_OF_MINIMUM_EIGHT_CHARACTERS
     return VALID_PASSWORD
 }
+
+fun String.separateMinute() = substring(indexOf(":") + 1)
+

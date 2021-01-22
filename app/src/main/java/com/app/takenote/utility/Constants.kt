@@ -90,3 +90,7 @@ const val PM = "PM"
 const val FORMATTED_DAY = "formatted_day"
 
 const val FORMATTED_TIME = "formatted_time"
+
+const val FORMATTED_DATE = "formatted_date"
+
+const val TIME_MERIDIAN = "time_meridian"
