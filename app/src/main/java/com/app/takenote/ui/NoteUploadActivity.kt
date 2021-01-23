@@ -6,7 +6,6 @@ import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -95,8 +94,9 @@ class NoteUploadActivity : BaseActivity() {
             val timeMeridian: String = formattedDate[TIME_MERIDIAN]!!
             val dateToShow =
                 "${formattedDay}," + formattedTime.plus(" $timeMeridian")
-            dayToShow = formattedDay.substring(0, formattedDay.lastIndexOf(" "))
-            timeToShow = formattedTime.plus(" ${formattedDateAndTime[TIME_MERIDIAN]}")
+            //dayToShow = formattedDay.substring(0, formattedDay.lastIndexOf(" "))
+            dayToShow = formattedDay
+            timeToShow = formattedTime.plus(" ${formattedDate[TIME_MERIDIAN]}")
             daySelected = formattedDate[FORMATTED_DATE]!!
             timeSelected = formattedDate[FORMATTED_TIME]!!
             formattedDateAndTime[FORMATTED_DAY] = dayToShow
@@ -106,6 +106,10 @@ class NoteUploadActivity : BaseActivity() {
             withContext(Dispatchers.Main) {
                 tvSelectedDate.text = dateToShow
                 flowReminderContainer.visibility = View.VISIBLE
+            }
+        } else {
+            withContext(Dispatchers.Main) {
+                flowReminderContainer.visibility = View.GONE
             }
         }
     }
@@ -148,15 +152,14 @@ class NoteUploadActivity : BaseActivity() {
         }
         currentNote?.let { note ->
             realTimeListener = fireStore.collection(NOTE_COLLECTION).document(note.id)
-                .addSnapshotListener { documentSnapshot: DocumentSnapshot?, error ->
+                .addSnapshotListener { documentSnapshot: DocumentSnapshot?, _ ->
                     if (documentSnapshot != null && documentSnapshot.exists()) {
                         val updatedTime = documentSnapshot[REMINDER_TIME].toString()
                         onBackground {
-                            if (!updatedTime.isEmptyOrIsBlank()) {
+                            if (!updatedTime.isEmptyOrIsBlank() &&
+                                updatedTime != currentNote?.reminderTime
+                            )
                                 setTime(updatedTime)
-                            } else {
-                                flowReminderContainer.visibility = View.GONE
-                            }
                         }
                     }
                 }
@@ -238,12 +241,23 @@ class NoteUploadActivity : BaseActivity() {
         val btnShowTimePicker = dialogView.extractView<EditText>(R.id.selectTime)
         val btnCancel = dialogView.extractView<TextView>(R.id.tvCancel)
         val btnApply = dialogView.extractView<Button>(R.id.btnSave)
+        var btnDelete: TextView? = null
         alertDialogBuilder.setView(dialogView)
         alertDialogBuilder.setCancelable(false)
         val alertDialog = alertDialogBuilder.create()
         if (formattedDateAndTime.isNotEmpty()) {
-            btnShowDatePicker.setData(formattedDateAndTime[FORMATTED_DAY]!!)
+            btnDelete = dialogView.extractView(R.id.tvDelete)
+            val formattedDay = formattedDateAndTime[FORMATTED_DAY]!!
+            btnShowDatePicker.setData(formattedDay.substring(0, formattedDay.lastIndexOf(" ")))
             btnShowTimePicker.setData(formattedDateAndTime[FORMATTED_TIME]!!)
+            btnDelete?.visibility = View.VISIBLE
+        }
+        btnDelete?.setOnClickListener {
+            noteUploadViewModel.deleteTime(currentNote!!)
+            refreshDateData()
+            flowReminderContainer.visibility = View.GONE
+            currentNote = currentNote?.copy(reminderTime = "")
+            alertDialog.cancel()
         }
         alertDialog.show()
         btnCancel.setOnClickListener {
@@ -295,6 +309,8 @@ class NoteUploadActivity : BaseActivity() {
         daySelected = ""
         timeSelected = ""
         timeToShow = ""
+        if (formattedDateAndTime.isNotEmpty())
+            formattedDateAndTime.clear()
     }
 
     private fun showDatePicker(editText: EditText) {
@@ -302,7 +318,7 @@ class NoteUploadActivity : BaseActivity() {
             this,
             { _, year, month, dayOfMonth ->
                 daySelected = "${year}-${formattedValue(month + 1, dayOfMonth, "-")}"
-                dayToShow = "$dayOfMonth ${getMonthName(month)}"
+                dayToShow = "$dayOfMonth ${getMonthName(month)} $year"
                 editText.setData(dayToShow)
             },
             DateUtil.calendar.year,
@@ -328,8 +344,8 @@ class NoteUploadActivity : BaseActivity() {
                     }
                     in 1..11 -> {
                         val formattedTime = formattedValue(hourOfDay, minute, ":")
-                        timeToShow = formattedTime
                         timeMeridian = AM
+                        timeToShow = formattedTime.plus(" $timeMeridian")
                         editText.setData(formattedTime.plus(" $timeMeridian"))
                         formattedTime
                     }

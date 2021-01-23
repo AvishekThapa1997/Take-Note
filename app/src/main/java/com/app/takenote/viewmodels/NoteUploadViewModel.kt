@@ -10,7 +10,7 @@ import com.app.takenote.pojo.Note
 import com.app.takenote.repository.DataRepository
 import com.app.takenote.utility.DateUtil
 import com.app.takenote.utility.NOTE_DISCARDED
-import java.util.*
+import com.app.takenote.utility.REMINDER_TIME
 
 
 class NoteUploadViewModel(private val dataRepository: DataRepository) : ViewModel() {
@@ -47,7 +47,7 @@ class NoteUploadViewModel(private val dataRepository: DataRepository) : ViewMode
             if (updatedData.isNullOrEmpty())
                 _message.value = NOTE_DISCARDED
             else {
-                dataRepository.updateNote(updatedData,note.id) { errorMessage ->
+                dataRepository.updateNote(updatedData, note.id) { errorMessage ->
                     _message.value = errorMessage
                     // isSuccess = false
                 }
@@ -56,6 +56,13 @@ class NoteUploadViewModel(private val dataRepository: DataRepository) : ViewMode
         }
     }
 
+    fun deleteTime(note: Note) {
+        runIO {
+            dataRepository.updateNote(mutableMapOf(REMINDER_TIME to ""), note.id) { errorMessage ->
+                _message.value = errorMessage
+            }
+        }
+    }
 //    private fun setSuccess(success: Boolean) {
 //        if (success)
 //            _message.value = SUCCESS

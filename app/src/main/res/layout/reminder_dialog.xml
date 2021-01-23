@@ -26,6 +26,13 @@
         app:layout_constraintGuide_percent="0.05" />
 
     <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/deleteTitleGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.35" />
+
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/layoutEndGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,12 +42,11 @@
     <androidx.constraintlayout.helper.widget.Flow
         android:id="@+id/flowContainer"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:constraint_referenced_ids="tvAddReminder,selectDate,selectTime,actionButtonEvents"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="tvAddReminder,selectDate,selectTime"
         app:flow_maxElementsWrap="1"
         app:flow_verticalGap="12dp"
         app:flow_wrapMode="aligned"
-        app:layout_constraintBottom_toBottomOf="@id/layoutBottomGuideline"
         app:layout_constraintEnd_toEndOf="@id/layoutEndGuideline"
         app:layout_constraintStart_toStartOf="@id/layoutStartGuideline"
         app:layout_constraintTop_toTopOf="@id/layoutTopGuideline" />
@@ -83,7 +89,11 @@
         android:layout_height="wrap_content"
         app:constraint_referenced_ids="tvCancel,btnSave"
         app:flow_maxElementsWrap="2"
-        app:flow_wrapMode="chain" />
+        app:flow_wrapMode="aligned"
+        app:layout_constraintBottom_toBottomOf="@id/layoutBottomGuideline"
+        app:layout_constraintEnd_toEndOf="@id/layoutEndGuideline"
+        app:layout_constraintStart_toStartOf="@id/deleteTitleGuideline"
+        app:layout_constraintTop_toBottomOf="@id/flowContainer" />
 
     <TextView
         android:id="@+id/tvCancel"
@@ -100,4 +110,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/save" />
+
+    <TextView
+        android:id="@+id/tvDelete"
+        android:layout_width="0dp"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:text="@string/delete"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/lightBlack"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/layoutBottomGuideline"
+        app:layout_constraintEnd_toEndOf="@id/deleteTitleGuideline"
+        app:layout_constraintStart_toStartOf="@id/layoutStartGuideline"
+        app:layout_constraintTop_toBottomOf="@id/flowContainer" />
 </androidx.constraintlayout.widget.ConstraintLayout>
