@@ -1,11 +1,11 @@
 package com.app.takenote.extensions
 
 import androidx.work.*
-import com.app.takenote.utility.IMAGE_FILE_PATH
-import com.app.takenote.utility.PROFILE_IMAGE_UPLOAD
-import com.app.takenote.utility.USER_ID
+import com.app.takenote.utility.*
 import com.app.takenote.worker.ImageUploadWorker
 import com.app.takenote.worker.ImageUrlUploadWorker
+import com.app.takenote.worker.NotificationWorker
+import java.util.concurrent.TimeUnit
 
 fun WorkManager.setWork(userId: String, filePath: String): OneTimeWorkRequest {
     val imageUploadWorker = setUpImageUploadWorker(userId, filePath)
@@ -27,3 +27,15 @@ fun setUpImageUploadWorker(userId: String, filePath: String): OneTimeWorkRequest
 
 fun setImageUrlUploadWorker() =
     OneTimeWorkRequestBuilder<ImageUrlUploadWorker>().build()
+
+fun setReminderWorker(
+    title: String,
+    noteId: String,
+    delayDuration: Long
+): OneTimeWorkRequest {
+    val reminderWorker = OneTimeWorkRequestBuilder<NotificationWorker>()
+    return reminderWorker.apply {
+        setInitialDelay(delayDuration, TimeUnit.MILLISECONDS)
+        setInputData(workDataOf(NOTE_TITLE to title, NOTE_ID to noteId))
+    }.build()
+}

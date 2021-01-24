@@ -3,6 +3,7 @@ package com.app.takenote.viewholder
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.WorkManager
 import com.app.takenote.extensions.*
 import com.app.takenote.helper.ClickListener
 import com.app.takenote.pojo.Note
@@ -65,6 +66,10 @@ class NoteViewHolder(
         weakReference.get()?.deleteNote(adapterPosition)
         note?.let {
             cacheTime.remove(it.id)
+        }
+        note?.let {
+            val workManager = WorkManager.getInstance(mView.context)
+            workManager.cancelUniqueWork(it.id)
         }
     }
 }

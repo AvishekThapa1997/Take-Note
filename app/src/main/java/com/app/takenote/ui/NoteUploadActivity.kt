@@ -6,6 +6,7 @@ import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -14,6 +15,8 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.work.ExistingWorkPolicy
+import androidx.work.WorkManager
 import com.app.takenote.R
 import com.app.takenote.extensions.*
 import com.app.takenote.pojo.Note
@@ -29,11 +32,11 @@ import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.android.synthetic.main.activity_note_take.*
 import kotlinx.android.synthetic.main.reminder_layout.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 import org.koin.android.viewmodel.ext.android.viewModel
-import java.text.SimpleDateFormat
-import java.time.Duration
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class NoteUploadActivity : BaseActivity() {
@@ -52,6 +55,9 @@ class NoteUploadActivity : BaseActivity() {
     private var timeMeridian: String = ""
     private val formattedDateAndTime: MutableMap<String, String> by lazy {
         mutableMapOf()
+    }
+    private val workManager: WorkManager by lazy {
+        WorkManager.getInstance(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,6 +82,18 @@ class NoteUploadActivity : BaseActivity() {
         }
         openKeyboard()
         observeErrorMessage()
+        observeNoteId()
+    }
+
+    private fun observeNoteId() {
+        onBackground {
+            noteUploadViewModel.noteId.collect { note ->
+                val time = note.reminderTime
+                if (!time.isEmptyOrIsBlank())
+                    setReminderWorker(note.title, (time.toLong() - DateUtil.currentTime), note.id)
+            }
+
+        }
     }
 
     private suspend fun setTime(reminderTime: String) {
@@ -194,12 +212,19 @@ class NoteUploadActivity : BaseActivity() {
             hideKeyboard(currentFocus?.windowToken)
             isKeyboardVisible = false
         }
+        val reminderTime = "${selectedDate?.time ?: ""}"
         noteUploadViewModel.uploadNote(
             inputs[NOTE_TITLE].toString(),
             inputs[NOTE_BODY].toString(),
             currentUser?.uid!!,
-            "${selectedDate?.time ?: ""}"
+            reminderTime
         )
+//        if (!reminderTime.isEmptyOrIsBlank())
+//            setReminderWorker(
+//                inputs[NOTE_TITLE].toString(),
+//                reminderTime.toLong() - DateUtil.currentTime,
+//                currentNote?.id!!
+//            )
         finish()
     }
 
@@ -227,6 +252,8 @@ class NoteUploadActivity : BaseActivity() {
                 updatedData,
                 currentNote
             )
+            val timeToSet = time.toLong() - DateUtil.currentTime
+            setReminderWorker(title, timeToSet, currentNote.id)
         }
         finish()
     }
@@ -264,6 +291,9 @@ class NoteUploadActivity : BaseActivity() {
             selectedDate?.let {
                 DateUtil.calendar.time = it
             }
+            currentNote?.id?.let {
+                workManager.cancelUniqueWork(it)
+            }
             alertDialog.cancel()
         }
         btnShowDatePicker.setOnClickListener {
@@ -284,6 +314,7 @@ class NoteUploadActivity : BaseActivity() {
             if (!daySelected.isEmptyOrIsBlank() && !timeSelected.isEmptyOrIsBlank()) {
                 val dateInString = daySelected.plus(":$timeSelected")
                 selectedDate = DateUtil.createDate(dateInString)
+                Log.i("TAG", "showAddReminderDialog: $selectedDate")
                 selectedDate?.let { _selectedDate ->
                     if (DateUtil.currentTime > _selectedDate.time) {
                         Toast.makeText(this, "Invalid Time", Toast.LENGTH_SHORT).show()
@@ -371,4 +402,17 @@ class NoteUploadActivity : BaseActivity() {
     }
 
     private fun <T : View> View.extractView(viewId: Int) = findViewById<T>(viewId)
+
+    private fun setReminderWorker(data: String, time: Long, noteId: String) {
+        Log.i("TAG", "Milliseconds $time")
+        Log.i("TAG", "Minutes: ${TimeUnit.MILLISECONDS.toMinutes(time)}")
+        workManager.apply {
+            val workRequest = setReminderWorker(data, noteId, time)
+            enqueueUniqueWork(
+                noteId,
+                ExistingWorkPolicy.REPLACE,
+                workRequest
+            )
+        }
+    }
 }
