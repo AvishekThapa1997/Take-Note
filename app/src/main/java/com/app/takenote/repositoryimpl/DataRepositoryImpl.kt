@@ -59,24 +59,25 @@ class DataRepositoryImpl(private val fireStore: FirebaseFirestore) : DataReposit
             }
     }
 
-    override fun storeNote(note: Note, onError: (String) -> Unit) {
+    override fun storeNote(note: Note, onError: (String) -> Unit, onSuccess: (Note) -> Unit) {
         fireStore.collection(NOTE_COLLECTION).document().apply {
             val currentNote = note.copy(id = id)
             val mappedData = currentNote.toMap()
             set(mappedData).addOnFailureListener { _ ->
                 onError(SOMETHING_WENT_WRONG)
             }
+            onSuccess(currentNote)
         }
     }
 
     override fun updateNote(
         updatedData: Map<String, String>,
         noteId: String,
-        onError: (String) -> Unit
+        onError: ((String) -> Unit)?
     ) {
         fireStore.collection(NOTE_COLLECTION).document(noteId).update(updatedData)
             .addOnFailureListener {
-                onError(SOMETHING_WENT_WRONG)
+                onError?.invoke(SOMETHING_WENT_WRONG)
             }
     }
 

@@ -11,12 +11,18 @@ import com.app.takenote.repository.DataRepository
 import com.app.takenote.utility.DateUtil
 import com.app.takenote.utility.NOTE_DISCARDED
 import com.app.takenote.utility.REMINDER_TIME
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.receiveAsFlow
 
 
 class NoteUploadViewModel(private val dataRepository: DataRepository) : ViewModel() {
     private val _message: MutableLiveData<String> = MutableLiveData()
     val message: LiveData<String>
         get() = _message
+    private val _noteId: Channel<Note> = Channel()
+    val noteId: Flow<Note>
+        get() = _noteId.receiveAsFlow()
 
     fun uploadNote(noteTitle: String, noteBody: String, userId: String, reminderTime: String) {
         runIO {
@@ -32,9 +38,13 @@ class NoteUploadViewModel(private val dataRepository: DataRepository) : ViewMode
                     "${DateUtil.currentTime}",
                     reminderTime
                 )
-                dataRepository.storeNote(note) { errorMessage ->
+                dataRepository.storeNote(note, { errorMessage ->
                     _message.value = errorMessage
                     //isSuccess = false
+                }) { noteId ->
+                    runIO {
+                        _noteId.send(noteId)
+                    }
                 }
                 // setSuccess(isSuccess)
             }
@@ -63,6 +73,7 @@ class NoteUploadViewModel(private val dataRepository: DataRepository) : ViewMode
             }
         }
     }
+
 //    private fun setSuccess(success: Boolean) {
 //        if (success)
 //            _message.value = SUCCESS
