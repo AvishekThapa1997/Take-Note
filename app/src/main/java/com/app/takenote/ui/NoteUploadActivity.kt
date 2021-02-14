@@ -90,7 +90,12 @@ class NoteUploadActivity : BaseActivity() {
             noteUploadViewModel.noteId.collect { note ->
                 val time = note.reminderTime
                 if (!time.isEmptyOrIsBlank())
-                    setReminderWorker(note.title, (time.toLong() - DateUtil.currentTime), note.id)
+                    setReminderWorker(
+                        note.title,
+                        note.body,
+                        (time.toLong() - DateUtil.currentTime),
+                        note.id
+                    )
             }
 
         }
@@ -253,7 +258,7 @@ class NoteUploadActivity : BaseActivity() {
                 currentNote
             )
             val timeToSet = time.toLong() - DateUtil.currentTime
-            setReminderWorker(title, timeToSet, currentNote.id)
+            setReminderWorker(title, body, timeToSet, currentNote.id)
         }
         finish()
     }
@@ -314,7 +319,6 @@ class NoteUploadActivity : BaseActivity() {
             if (!daySelected.isEmptyOrIsBlank() && !timeSelected.isEmptyOrIsBlank()) {
                 val dateInString = daySelected.plus(":$timeSelected")
                 selectedDate = DateUtil.createDate(dateInString)
-                Log.i("TAG", "showAddReminderDialog: $selectedDate")
                 selectedDate?.let { _selectedDate ->
                     if (DateUtil.currentTime > _selectedDate.time) {
                         Toast.makeText(this, "Invalid Time", Toast.LENGTH_SHORT).show()
@@ -403,11 +407,10 @@ class NoteUploadActivity : BaseActivity() {
 
     private fun <T : View> View.extractView(viewId: Int) = findViewById<T>(viewId)
 
-    private fun setReminderWorker(data: String, time: Long, noteId: String) {
-        Log.i("TAG", "Milliseconds $time")
+    private fun setReminderWorker(noteTitle: String, noteBody: String, time: Long, noteId: String) {
         Log.i("TAG", "Minutes: ${TimeUnit.MILLISECONDS.toMinutes(time)}")
         workManager.apply {
-            val workRequest = setReminderWorker(data, noteId, time)
+            val workRequest = setReminderWorker(noteTitle, noteBody, noteId, time)
             enqueueUniqueWork(
                 noteId,
                 ExistingWorkPolicy.REPLACE,
