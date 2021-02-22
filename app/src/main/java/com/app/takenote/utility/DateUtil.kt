@@ -1,6 +1,5 @@
 package com.app.takenote.utility
 
-import android.util.Log
 import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.*
@@ -12,7 +11,7 @@ object DateUtil {
     private val months: Array<String> by lazy {
         DateFormatSymbols().months
     }
-    val currentTime: Long = Date().time
+    val currentTime: Long = System.currentTimeMillis()
     fun getMonthName(index: Int) = months[index]
     fun formattedValue(value1: Int, value2: Int, separator: String): String {
         val formattedFirstValue = if (value1.toString().length < 2)

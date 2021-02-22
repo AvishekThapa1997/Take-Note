@@ -30,12 +30,19 @@ fun setImageUrlUploadWorker() =
 
 fun setReminderWorker(
     title: String,
+    body: String,
     noteId: String,
     delayDuration: Long
 ): OneTimeWorkRequest {
     val reminderWorker = OneTimeWorkRequestBuilder<NotificationWorker>()
     return reminderWorker.apply {
         setInitialDelay(delayDuration, TimeUnit.MILLISECONDS)
-        setInputData(workDataOf(NOTE_TITLE to title, NOTE_ID to noteId))
+        setInputData(
+            workDataOf(
+                NOTE_TITLE to title,
+                NOTE_ID to noteId,
+                NOTE_BODY to body
+            )
+        )
     }.build()
 }

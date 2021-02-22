@@ -33,4 +33,6 @@
     <string name="select_date">Select Date</string>
     <string name="reminder_icon">Reminder Icon</string>
     <string name="delete">Delete</string>
+    <string name="channel_name">Reminder Channel</string>
+    <string name="channel_description">Reminder Channel Description</string>
 </resources>

@@ -104,13 +104,14 @@ class NoteUploadActivity : BaseActivity() {
     private suspend fun setTime(reminderTime: String) {
         val time = reminderTime.toLongOrNull() ?: 0
         if (time > DateUtil.currentTime) {
-            DateUtil.calendar.setCurrentTime(Date(time))
+            val calendar = Calendar.getInstance()//DateUtil.calendar.setCurrentTime(Date(time))
+            calendar.time = Date(time)
             val formattedDate = DateUtil.formattedDate(
-                DateUtil.calendar.year,
-                DateUtil.calendar.dayOfMonth,
-                DateUtil.calendar.month,
-                DateUtil.calendar.hourOfDay,
-                DateUtil.calendar.minute
+                calendar.year,
+                calendar.dayOfMonth,
+                calendar.month,
+                calendar.hourOfDay,
+                calendar.minute
             )
             val formattedDay: String = formattedDate[FORMATTED_DAY]!!
             val formattedTime: String = formattedDate[FORMATTED_TIME]!!
@@ -302,14 +303,14 @@ class NoteUploadActivity : BaseActivity() {
             alertDialog.cancel()
         }
         btnShowDatePicker.setOnClickListener {
-            DateUtil.calendar.setCurrentTime()
+            //DateUtil.calendar.setCurrentTime()
             if (isKeyboardVisible) {
                 hideKeyboard(currentFocus?.windowToken)
                 showDatePicker(it as EditText)
             }
         }
         btnShowTimePicker.setOnClickListener {
-            DateUtil.calendar.setCurrentTime()
+            //DateUtil.calendar.setCurrentTime()
             if (isKeyboardVisible) {
                 hideKeyboard(currentFocus?.windowToken)
                 showTimePicker(it as EditText)
@@ -408,7 +409,6 @@ class NoteUploadActivity : BaseActivity() {
     private fun <T : View> View.extractView(viewId: Int) = findViewById<T>(viewId)
 
     private fun setReminderWorker(noteTitle: String, noteBody: String, time: Long, noteId: String) {
-        Log.i("TAG", "Minutes: ${TimeUnit.MILLISECONDS.toMinutes(time)}")
         workManager.apply {
             val workRequest = setReminderWorker(noteTitle, noteBody, noteId, time)
             enqueueUniqueWork(

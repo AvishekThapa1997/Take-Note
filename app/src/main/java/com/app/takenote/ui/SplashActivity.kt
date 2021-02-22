@@ -46,7 +46,7 @@ class SplashActivity : BaseActivity() {
                 }
                 is Error -> toLoginActivity()
             }
-            finish()
+            finishAffinity()
         }
     }
 

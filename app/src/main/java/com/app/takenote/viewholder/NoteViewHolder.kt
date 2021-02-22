@@ -34,24 +34,29 @@ class NoteViewHolder(
         if (!currentNote.reminderTime.isEmptyOrIsBlank()) {
             val reminderTime = currentNote.reminderTime.toLongOrNull() ?: 0
             if (reminderTime > DateUtil.currentTime) {
-                DateUtil.calendar.setCurrentTime(Date(reminderTime))
-                val formattedDate = cacheTime[currentNote.id] ?: DateUtil.formattedDate(
-                    DateUtil.calendar.year,
-                    DateUtil.calendar.dayOfMonth,
-                    DateUtil.calendar.month,
-                    DateUtil.calendar.hourOfDay,
-                    DateUtil.calendar.minute
+                val calendar = Calendar.getInstance()
+                calendar.time = Date(reminderTime)
+                val formattedDate = DateUtil.formattedDate(
+                    calendar.year,
+                    calendar.dayOfMonth,
+                    calendar.month,
+                    calendar.hourOfDay,
+                    calendar.minute
                 )
-                val dateToShow: String = if (formattedDate is Map<*, *>) {
-                    val value = "${formattedDate[FORMATTED_DAY]},${
-                        formattedDate[FORMATTED_TIME].toString()
-                            .plus(" ${formattedDate[TIME_MERIDIAN]}")
-                    }"
-                    cacheTime[currentNote.id] = value
-                    value
-                } else {
-                    formattedDate.toString()
-                }
+//                val dateToShow: String = if (formattedDate is Map<*, *>) {
+//                    val value = "${formattedDate[FORMATTED_DAY]},${
+//                        formattedDate[FORMATTED_TIME].toString()
+//                            .plus(" ${formattedDate[TIME_MERIDIAN]}")
+//                    }"
+//                    cacheTime[currentNote.id] = value
+//                    value
+//                } else {
+//                    formattedDate.toString()
+//                }
+                val dateToShow = "${formattedDate[FORMATTED_DAY]},${
+                    formattedDate[FORMATTED_TIME].toString()
+                        .plus(" ${formattedDate[TIME_MERIDIAN]}")
+                }"
                 mView.tvSelectedDate.text = dateToShow
                 mView.flowReminderContainer.visibility = View.VISIBLE
             } else {
