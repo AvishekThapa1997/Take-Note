@@ -258,8 +258,10 @@ class NoteUploadActivity : BaseActivity() {
                 updatedData,
                 currentNote
             )
-            val timeToSet = time.toLong() - DateUtil.currentTime
-            setReminderWorker(title, body, timeToSet, currentNote.id)
+            if (!time.isEmptyOrIsBlank()) {
+                val timeToSet = time.toLong() - DateUtil.currentTime
+                setReminderWorker(title, body, timeToSet, currentNote.id)
+            }
         }
         finish()
     }
