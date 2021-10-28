@@ -29,6 +29,4 @@
 
 <img src="app/record/app_demo.gif">
 
-#### Apk Added
-<a href="app/apk/Take Note.apk">Download Apk</a>
 
